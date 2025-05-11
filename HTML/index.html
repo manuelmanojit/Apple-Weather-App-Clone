@@ -18,7 +18,8 @@
     />
 
     <!-- Defer JavaScript loading -->
-    <script src="../JS/main.js" defer></script>
+    <script type="module src="../JS/main.js" defer></script>
+    <script type="module" src="../JS/Slider-card.js" defer></script>
   </head>
 
   <body>
@@ -46,9 +47,9 @@
         <section>
           <header>
             <div id="header-container">
-              <div id="search-container">
+              <div class="search-container">
                 <span class="material-symbols-outlined">search</span>
-                <input type="text" id="search" placeholder="Search" />
+                <input type="text" class="search" placeholder="Search" />
               </div>
               <div id="current-weather-container">
                 <div class="location-and-home">

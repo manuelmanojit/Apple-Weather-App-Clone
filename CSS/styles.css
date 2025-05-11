@@ -40,7 +40,7 @@ main {
 
 /* SEARCH BOX */
 
-#search-container {
+.search-container {
   display: flex;
   align-items: center;
   position: fixed;
@@ -54,7 +54,7 @@ main {
   -webkit-backdrop-filter: blur(15px); /* Safari support */
 }
 
-#search {
+.search {
   background-color: rgba(0, 0, 0, 0);
   color: white;
 }
