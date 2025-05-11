@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apple Weather App</title>
+    <!-- Link to external stylesheet -->
+    <link rel="stylesheet" href="../CSS/styles.css" />
+    <!-- Example: Google Fonts icon import (customize as needed) -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+    />
+    <!-- Add Inter Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Defer JavaScript loading -->
+    <script src="../JS/main.js" defer></script>
+  </head>
+
+  <body>
+    <div id="master-container">
+      <!-- === Navigation Bar (for future left-side placement) === -->
+      <nav>
+        <div id="nav-container">
+          <!-- === Navigation Section 1 === -->
+          <div>
+            <p></p>
+            <p></p>
+            <p></p>
+            <p></p>
+            <div>
+              <p></p>
+              <p></p>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- === Main Content Area === -->
+      <main id="main-container">
+        <!-- === Section 1: Current Weather Display (Example Block) === -->
+        <section>
+          <header>
+            <div id="header-container">
+              <div id="search-container">
+                <span class="material-symbols-outlined">search</span>
+                <input type="text" id="search" placeholder="Search" />
+              </div>
+              <div id="current-weather-container">
+                <div class="location-and-home">
+                  <i
+                    class="fa-solid fa-location-arrow"
+                    style="color: #ffffff"
+                  ></i>
+                  <p class="home">HOME</p>
+                </div>
+                <p class="city">København S</p>
+                <p class="temperature">7°</p>
+                <p class="condition">Mostly Sunny</p>
+                <div class="h-and-l">
+                  <span>H:</span><span>14°</span> <span>L:</span><span>7°</span>
+                </div>
+              </div>
+            </div>
+          </header>
+        </section>
+
+        <!-- === Section 2: Forecast Navigation === -->
+        <section id="forecast navigation">
+          <div id="inner-container">
+            <!-- === Arrow Left === -->
+            <div id="left-arrow"></div>
+            <!-- === Forecast Day Cards (14) === -->
+            <!-- <div class="cards" id="n1">
+              <div></div>
+              <div>
+                <div>
+                  <p></p>
+                  <img src="" alt="" />
+                  <p></p>
+                </div>
+              </div>
+            </div> -->
+            <!-- Empty divs for n2 to n14 -->
+            <div class="slider cards">
+              <div class="slider-header">
+                <p>
+                  Sunny conditions will continue for the rest of the day. Wind
+                  gusts are up to 5 m/s
+                </p>
+                <hr />
+              </div>
+              <div class="slider-contents"></div>
+              <template id="cloud-icon">
+                <svg
+                  viewBox="0 0 23.75 14.32"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <style>
+                    .cls-1 {
+                      fill: #fff;
+                    }
+                  </style>
+                  <path
+                    class="cls-1"
+                    d="m17.03,5.12S15.81-.58,9.66.05C6.48.37,3.88,2.64,3.88,5.84c0,.24.02.48.05.71-.02,0-.03,0-.05,0-2.14,0-3.88,1.74-3.88,3.88s1.74,3.88,3.88,3.88h17.19c2.51-1.25,3.38-4.66,2.1-6.87-2.02-3.47-6.13-2.33-6.13-2.33Z"
+                  />
+                </svg>
+              </template>
+            </div>
+            <div class="forecast cards"></div>
+            <div class="air cards"></div>
+            <div class="rainmap cards"></div>
+            <div class="wind cards"></div>
+            <div class="uvindex cards"></div>
+            <div class="sunset cards"></div>
+            <div class="feelslike cards"></div>
+            <div class="rain cards"></div>
+            <div class="moon cards"></div>
+            <div class="humidity cards"></div>
+            <div class="visibility cards"></div>
+            <div class="pressure cards"></div>
+            <div class="averages cards"></div>
+            <!-- === Arrow Right === -->
+            <div id="right-arrow"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
