@@ -1,15 +1,18 @@
-//GENERATE WEATHER OBJECT
-async function getWeather() {
+import { setSliderTrio } from "./Slider-card.js";
+
+const search = document.querySelector(".search");
+//THIS IS UPDATING ON GETWEATHER, NOT REQUESTWEATHER
+search.addEventListener("keydown", async (e) => {
+  if (e.key === "Enter") {
+    let newCity = search.value;
+    const forecast = await getWeather(newCity);
+    await setSliderTrio(forecast);
+    console.log(newCity);
+  }
+});
+
+async function getWeather(city = "copenhagen") {
   const API = "138593b09da6432e891161652250905";
-  let city = "Copenhagen";
-
-  const search = document.querySelector(".search");
-  search.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      city = search.value;
-    }
-  });
-
   const weatherURL = `https://api.weatherapi.com/v1/forecast.json?key=${API}&q=${city}&days=10&aqi=yes&alerts=no`;
   const astronomyURL = `https://api.weatherapi.com/v1/astronomy.json?key=${API}&q=${city}`;
   //WEATHER REQUEST
@@ -24,7 +27,7 @@ async function getWeather() {
     throw new Error("Network response not OK");
   }
   const astronomy = await moonResp.json();
-  //POPULATING FORECAST OBJECT TO USE FOR THE APP
+
   const forecast = {
     conditions: weather.current.condition.text,
     temperature: weather.current.temp_c,
@@ -32,42 +35,34 @@ async function getWeather() {
     airQuality: weather.current.air_quality["us-epa-index"],
     uvIndex: weather.current.uv,
     wind: weather.current.wind_kph,
-    windDirection: weather.current.wind_dir,
-    windDegree: weather.current.wind_degree,
-    precipitation: weather.current.precip_mm,
-    visibility: weather.current.vis_km,
-    humidity: weather.current.humidity,
+    windDirection: weather.current.humidity,
     sunrise: astronomy.astronomy.astro.sunrise,
     sunset: astronomy.astronomy.astro.sunset,
     dailyForecast: weather.forecast.forecastday[0],
     hourlyForecast: weather.forecast.forecastday[0].hour,
     timezone: weather.location.tz_id,
   };
-  console.log(weather);
+  // console.log(weather);
+  // console.log(forecast);
   return forecast;
 }
 
 // GET CURRENT HOUR
-async function getCurrentHour() {
+async function getCurrentHour(forecastData) {
   const currentDay = new Date();
-  const weather = await getWeather();
-  const timezone = weather.timezone;
+  const timezone = await forecastData.timezone;
   const options = { hour: "numeric", timeZone: timezone, hour12: false };
   const currentHour = parseInt(
     new Intl.DateTimeFormat("default", options).format(currentDay)
   );
-  console.log(currentHour, timezone);
   return currentHour;
 }
 
-getCurrentHour();
-
 //GET SUNRISE TIME
-async function getSunriseTime() {
-  const forecast = await getWeather();
-  const time = forecast.sunrise.slice(0, 2);
+async function getSunriseTime(forecastData) {
+  const time = forecastData.sunrise.slice(0, 2);
   //I CAN'T DO slice(6,8) BECAUSE STRING LENGTH MIGHT CHANGE
-  const period = forecast.sunrise.slice(-2);
+  const period = forecastData.sunrise.slice(-2);
   //HANDLE MIDNIGHT TIME
   if (period === "AM" && time === "12") {
     return "00";
@@ -82,11 +77,10 @@ async function getSunriseTime() {
 }
 
 //GET SUNSET TIME
-async function getSunsetTime() {
-  const forecast = await getWeather();
-  const time = forecast.sunset.slice(0, 2);
+async function getSunsetTime(forecastData) {
+  const time = forecastData.sunset.slice(0, 2);
   //I CAN'T DO slice(6,8) BECAUSE STRING LENGTH MIGHT CHANGE
-  const period = forecast.sunset.slice(-2);
+  const period = forecastData.sunset.slice(-2);
   //HANDLE MIDNIGHT TIME
   if (period === "AM" && time === "12") {
     return "00";
@@ -100,25 +94,11 @@ async function getSunsetTime() {
   return time;
 }
 
-function airQuality(air) {
-  const aqi = air;
-  let resp;
-  if (aqi >= 0 && aqi <= 50) return (resp = "Good");
-  if (aqi >= 51 && aqi <= 100) return (resp = "Moderate");
-  if (aqi >= 101 && aqi <= 150)
-    return (resp = "Unhealthy for Sensitive Groups");
-  if (aqi >= 151 && aqi <= 200) return (resp = "Unhealthy");
-  if (aqi >= 201 && aqi <= 300) return (resp = "Very Unhealthy");
-  if (aqi >= 301 && aqi <= 500) return (resp = "Hazardous");
-  resp = "Invalid AQI value";
-  return resp;
-}
-
-async function isNight() {
+async function isNight(forecastData) {
   //if the current hour is
-  const now = await getCurrentHour();
-  const sunrise = await getSunriseTime();
-  const sunset = await getSunsetTime();
+  const now = await getCurrentHour(forecastData);
+  const sunrise = await getSunriseTime(forecastData);
+  const sunset = await getSunsetTime(forecastData);
 
   let verdict;
 
@@ -143,7 +123,6 @@ async function isNight() {
       verdict = false;
     }
   }
-  console.log(now, sunrise, sunset, verdict);
   return verdict;
 }
 

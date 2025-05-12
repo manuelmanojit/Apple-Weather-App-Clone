@@ -82,6 +82,7 @@ function generateIcon(nextHour, conditions, isNight) {
     cond === "moderate or heavy sleet showers" ||
     cond === "patchy sleet possible" ||
     cond === "patchy freezing drizzle possible" ||
+    cond === "thundery outbreaks in nearby" ||
     cond === "patchy light rain with thunder" ||
     cond === "moderate or heavy rain with thunder" ||
     cond === "patchy light snow with thunder" ||
@@ -114,26 +115,26 @@ function generateIcon(nextHour, conditions, isNight) {
     console.warn("⚠️ No icon matched for condition:", cond);
   }
 
-  console.log(sliderIcon.src);
   return sliderIcon;
 }
 
-function generateTemperature(forecast, nextHour) {
+function generateTemperature(forecastData, nextHour) {
   const sliderTemperature = document.createElement("p");
   sliderTemperature.classList.add("slider-temperature");
   const temperatureText = document.createTextNode(
-    `${Math.round(forecast.hourlyForecast[parseInt(nextHour)].temp_c)}°`
+    `${Math.round(forecastData.hourlyForecast[parseInt(nextHour)].temp_c)}°`
   );
   sliderTemperature.appendChild(temperatureText);
   return sliderTemperature;
 }
 
-async function generateSliderTrio() {
-  const forecast = await getWeather();
-  const currentHour = await getCurrentHour();
-
-  //GET SLIDER CONTAINER
+async function setSliderTrio(forecastData) {
+  const currentHour = await getCurrentHour(forecastData);
   const sliderContents = document.querySelector(".slider-contents");
+
+  // Clear the existing content by setting innerHTML to an empty string
+  sliderContents.innerHTML = "";
+
   //LOOP 24 TIMES TO GENERATE ONE DISPLAY FOR EACH HOUR OF THE DAY
   for (let i = 0; i < 24; i++) {
     //CREATE SLIDER TRIO
@@ -147,21 +148,23 @@ async function generateSliderTrio() {
     //⏰ GET TIME
     const sliderTime = generateHour(nextHour, i);
     //🌥️ DISPLAY ICON
-    const night = await isNight();
+    const night = await isNight(forecastData);
     const conditions =
-      forecast.hourlyForecast[parseInt(nextHour)].condition.text;
-    console.log(conditions);
+      forecastData.hourlyForecast[parseInt(nextHour)].condition.text;
+
     const sliderIcon = generateIcon(nextHour, conditions, night);
     //🌡️ DISPLAY TEMPERATURE
-    const sliderTemperature = generateTemperature(forecast, nextHour);
+    const sliderTemperature = generateTemperature(forecastData, nextHour);
 
     //APPEND CONTENTS TO TRIO
     sliderTrio.append(sliderTime, sliderIcon, sliderTemperature);
     //APPEND TRIO CONTAINER TO SLIDER CONTAINER
     sliderContents.appendChild(sliderTrio);
-
-    console.log(nextHour);
   }
 }
 
-console.log(generateSliderTrio());
+getWeather().then((forecastData) => {
+  setSliderTrio(forecastData);
+});
+
+export { setSliderTrio };
