@@ -1,4 +1,5 @@
-import { getCurrentHour, getWeather, isNight } from "./main.js";
+import { getCurrentHour, getWeather } from "./main.js";
+import { isNight } from "./day-or-night.js";
 
 function generateHour(nextHour, i) {
   const time = document.createElement("p");
@@ -162,9 +163,5 @@ async function setSliderTrio(forecastData) {
     sliderContents.appendChild(sliderTrio);
   }
 }
-
-getWeather().then((forecastData) => {
-  setSliderTrio(forecastData);
-});
 
 export { setSliderTrio };
