@@ -31,7 +31,9 @@ async function getWeather(city = "copenhagen") {
 
   const forecast = {
     conditions: weather.current.condition.text,
-    temperature: weather.current.temp_c,
+    temperature: Math.round(weather.current.temp_c),
+    tempMax: Math.round(weather.forecast.forecastday[0].day.maxtemp_c),
+    tempMin: Math.round(weather.forecast.forecastday[0].day.mintemp_c),
     feelsLike: weather.current["feelslike_c"],
     airQuality: weather.current.air_quality["us-epa-index"],
     uvIndex: weather.current.uv,
@@ -44,7 +46,6 @@ async function getWeather(city = "copenhagen") {
     timezone: weather.location.tz_id,
     city: weather.location.name,
   };
-  console.log(weather);
   // console.log(forecast);
   return forecast;
 }
@@ -61,7 +62,6 @@ async function getCurrentHour(forecastData) {
 }
 
 async function setHomeUI(forecastData) {
-  console.log(forecastData);
   await setHeader(forecastData);
   await setSliderTrio(forecastData);
 }
