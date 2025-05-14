@@ -59,7 +59,7 @@ main {
   color: white;
 }
 
-.material-symbols-outlined {
+.search-icon {
   font-size: 18px !important;
   margin-left: 5px;
   margin-right: 5px;
@@ -124,12 +124,12 @@ main {
   margin: 5rem auto;
   grid-template-rows: repeat(5, 145px);
   grid-template-columns: repeat(6, 145px);
-  gap: 1rem 1rem;
+  gap: 15px 15px;
 }
 
 .cards {
   border-radius: 10px;
-  background-color: rgba(12, 73, 120, 0.25); /* use rgba instead of opacity */
+  background-color: #0c497840; /* use rgba instead of opacity */
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px); /* Safari support */
 }
@@ -215,7 +215,7 @@ main {
   margin: 8px auto 8px 10px;
 }
 
-.slider-header hr {
+.slider-header > hr {
   width: calc(100% - 10px);
   border: 0.25px solid rgba(255, 255, 255, 0.35);
   margin-left: 10px;
@@ -247,4 +247,104 @@ main {
 
 .slider-temperature {
   margin-bottom: 10px;
+}
+
+/* RAIN MAP */
+.rainmap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rainmap-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rainmap-header {
+  display: flex;
+  height: auto;
+  width: 100%;
+  align-items: center;
+  padding-block: 10px;
+}
+
+.water-drop {
+  font-size: 0.9rem !important;
+  color: #88b4e1;
+  margin-left: 10px;
+  margin-right: 5px;
+}
+
+.rainmap-header > p {
+  text-transform: uppercase;
+  height: auto;
+  color: #88b4e1;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.25px;
+}
+
+#rain-map {
+  height: calc(100% - 10px);
+  width: calc(100% - 20px);
+  margin-top: 0px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+#rain-map .leaflet-control-attribution {
+  font-size: 0.55rem;
+  opacity: 0.75;
+}
+
+div.leaflet-top.leaflet-left {
+  top: auto !important;
+  bottom: 0px !important;
+}
+
+#rain-map .leaflet-control-zoom {
+  border: none;
+  margin-left: 5px;
+  margin-bottom: 5px;
+}
+
+#rain-map .leaflet-control-zoom-out,
+#rain-map .leaflet-control-zoom-in {
+  opacity: 1;
+  background-color: rgba(50, 51, 54, 0.65);
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+
+#rain-map .leaflet-control-zoom-out {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-top: 0.5px solid rgba(0, 0, 0, 0.25);
+}
+#rain-map .leaflet-control-zoom-in {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.leaflet-control-zoom span {
+  height: 100%;
+  color: rgb(255, 255, 255);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  text-indent: 0;
+  line-height: 22px;
 }

@@ -6,6 +6,12 @@
     <title>Apple Weather App</title>
     <!-- Link to external stylesheet -->
     <link rel="stylesheet" href="../CSS/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
     <!-- Example: Google Fonts icon import (customize as needed) -->
     <link
       rel="stylesheet"
@@ -18,6 +24,13 @@
     />
 
     <!-- Defer JavaScript loading -->
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+      defer
+    ></script>
     <script type="module" src="../JS/main.js" defer></script>
     <script type="module" src="../JS/Slider-card.js" defer></script>
     <script type="module" src="../JS/day-or-night.js" defer></script>
@@ -50,7 +63,9 @@
           <header>
             <div id="header-container">
               <div class="search-container">
-                <span class="material-symbols-outlined">search</span>
+                <span class="material-symbols-outlined search-icon"
+                  >search</span
+                >
                 <input type="text" class="search" placeholder="Search" />
               </div>
               <div id="current-weather-container">
@@ -99,26 +114,20 @@
                 <hr />
               </div>
               <div class="slider-contents"></div>
-              <template id="cloud-icon">
-                <svg
-                  viewBox="0 0 23.75 14.32"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <style>
-                    .cls-1 {
-                      fill: #fff;
-                    }
-                  </style>
-                  <path
-                    class="cls-1"
-                    d="m17.03,5.12S15.81-.58,9.66.05C6.48.37,3.88,2.64,3.88,5.84c0,.24.02.48.05.71-.02,0-.03,0-.05,0-2.14,0-3.88,1.74-3.88,3.88s1.74,3.88,3.88,3.88h17.19c2.51-1.25,3.38-4.66,2.1-6.87-2.02-3.47-6.13-2.33-6.13-2.33Z"
-                  />
-                </svg>
-              </template>
             </div>
             <div class="forecast cards"></div>
             <div class="air cards"></div>
-            <div class="rainmap cards"></div>
+            <div class="rainmap cards">
+              <div class="rainmap-header">
+                <span class="material-symbols-outlined water-drop">
+                  water_drop
+                </span>
+                <p>Precipitation</p>
+              </div>
+              <div class="rainmap-container">
+                <div id="rain-map"></div>
+              </div>
+            </div>
             <div class="wind cards"></div>
             <div class="uvindex cards"></div>
             <div class="sunset cards"></div>
