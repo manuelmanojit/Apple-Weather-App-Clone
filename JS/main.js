@@ -1,6 +1,7 @@
 import { setSliderTrio } from "./Slider-card.js";
 import { setHeader } from "./header.js";
 import { getRainMap } from "./rain-map.js";
+import { setFutureForecast } from "./10-day-forecast.js";
 
 const search = document.querySelector(".search");
 //THIS IS UPDATING ON GETWEATHER, NOT REQUESTWEATHER
@@ -40,17 +41,17 @@ async function getWeather(city = "copenhagen") {
     uvIndex: weather.current.uv,
     wind: weather.current.wind_kph,
     windDirection: weather.current.humidity,
-    sunrise: astronomy.astronomy.astro.sunrise,
-    sunset: astronomy.astronomy.astro.sunset,
+    futureForecast: weather.forecast.forecastday,
     dailyForecast: weather.forecast.forecastday[0],
     hourlyForecast: weather.forecast.forecastday[0].hour,
     timezone: weather.location.tz_id,
     city: weather.location.name,
-    date: weather.forecast.forecastday[0].date,
     longitude: weather.location.lon,
     latitude: weather.location.lat,
+    sunrise: astronomy.astronomy.astro.sunrise,
+    sunset: astronomy.astronomy.astro.sunset,
   };
-  console.log(forecast);
+  console.log(forecast, weather);
   return forecast;
 }
 
@@ -65,8 +66,8 @@ async function getCurrentHour(forecastData) {
   return currentHour;
 }
 
-async function getDate(forecastData) {
-  const day = await forecastData.date;
+async function getDate(forecastData, currentDay) {
+  const day = await forecastData.futureForecast[currentDay].date;
   const date = new Date(day);
   const name = date.toLocaleDateString(undefined, { weekday: "short" });
   return name;
@@ -76,6 +77,7 @@ async function setHomeUI(forecastData) {
   await setHeader(forecastData);
   await setSliderTrio(forecastData);
   await getRainMap(forecastData);
+  await setFutureForecast(forecastData);
 }
 
 getWeather().then((forecastData) => {

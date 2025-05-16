@@ -88,23 +88,13 @@
           </header>
         </section>
 
-        <!-- === Section 2: Forecast Navigation === -->
+        <!-- Section 2: Forecast Navigation -->
         <section id="forecast navigation">
           <div id="inner-container">
             <!-- === Arrow Left === -->
             <div id="left-arrow"></div>
-            <!-- === Forecast Day Cards (14) === -->
-            <!-- <div class="cards" id="n1">
-              <div></div>
-              <div>
-                <div>
-                  <p></p>
-                  <img src="" alt="" />
-                  <p></p>
-                </div>
-              </div>
-            </div> -->
-            <!-- Empty divs for n2 to n14 -->
+
+            <!-- WEATHER GRID -->
             <div class="slider cards">
               <div class="slider-header">
                 <p>
@@ -115,8 +105,18 @@
               </div>
               <div class="slider-contents"></div>
             </div>
-            <div class="forecast cards"></div>
-            <div class="air cards"></div>
+            <!-- FORECAST 10-DAY -->
+            <div class="forecast cards">
+              <div class="forecast-header">
+                <span class="material-symbols-outlined calendar-icon">
+                  calendar_month
+                </span>
+                <p>10-day-forecast</p>
+              </div>
+              <hr />
+              <div class="forecast-container"></div>
+            </div>
+            <!-- PRECIPITATION RAIN -->
             <div class="rainmap cards">
               <div class="rainmap-header">
                 <span class="material-symbols-outlined water-drop">
@@ -128,16 +128,15 @@
                 <div id="rain-map"></div>
               </div>
             </div>
+            <!-- WIND -->
             <div class="wind cards"></div>
+            <!-- ARI-QUALITY -->
+            <div class="air cards"></div>
             <div class="uvindex cards"></div>
             <div class="sunset cards"></div>
             <div class="feelslike cards"></div>
-            <div class="rain cards"></div>
-            <div class="moon cards"></div>
             <div class="humidity cards"></div>
             <div class="visibility cards"></div>
-            <div class="pressure cards"></div>
-            <div class="averages cards"></div>
             <!-- === Arrow Right === -->
             <div id="right-arrow"></div>
           </div>

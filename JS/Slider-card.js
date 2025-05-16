@@ -1,7 +1,15 @@
 import { getCurrentHour, getWeather } from "./main.js";
 import { isNight } from "./day-or-night.js";
+import {
+  getClearConditions,
+  getPartlyCloudyConditions,
+  getSunnyConditions,
+  getCloudyConditions,
+  getRainyConditions,
+  getSnowyConditions,
+} from "./get-weather-conditions.js";
 
-function generateHour(nextHour, i) {
+function setHour(nextHour, i) {
   const time = document.createElement("p");
   time.classList.add("slider-time");
   //UPDATE TIME DYNAMICALLY
@@ -16,110 +24,55 @@ function generateHour(nextHour, i) {
   return time;
 }
 
-function generateIcon(nextHour, conditions, isNight) {
-  const sliderIcon = document.createElement("img");
-  sliderIcon.classList.add("slider-icon");
+function setWeatherIcon(conditions, isNight) {
+  const weatherIcon = document.createElement("img");
+  weatherIcon.classList.add("weather-icon");
 
   let iconSet = false; // track if an icon was matched
 
   const cond = conditions.trim().toLowerCase();
 
-  sliderIcon.src = "";
-  if (cond === "clear") {
-    sliderIcon.src = "../SVGs/clear-night.svg";
-    sliderIcon.style.width = "12px";
+  weatherIcon.src = ""; // set empty icon to begin with to allow update
+
+  if (getClearConditions().includes(cond)) {
+    weatherIcon.src = "../SVGs/clear-night.svg";
+    weatherIcon.style.width = "12px";
     iconSet = true;
   }
-
-  if (cond === "partly cloudy") {
+  if (getPartlyCloudyConditions().includes(cond)) {
     if (!isNight) {
-      sliderIcon.src = "../SVGs/partly-sunny.svg";
-      sliderIcon.style.width = "22px";
+      weatherIcon.src = "../SVGs/partly-sunny.svg";
+      weatherIcon.style.width = "22px";
     } else if (isNight) {
-      sliderIcon.src = "../SVGs/partly-clear-night.svg";
+      weatherIcon.src = "../SVGs/partly-clear-night.svg";
     }
     iconSet = true;
   }
-
-  if (cond === "sunny") {
-    sliderIcon.src = "../SVGs/sunny.svg";
-    sliderIcon.style.width = "16px";
+  if (getSunnyConditions().includes(cond)) {
+    weatherIcon.src = "../SVGs/sunny.svg";
+    weatherIcon.style.width = "16px";
     iconSet = true;
   }
-
-  if (
-    cond === "cloudy" ||
-    cond === "overcast" ||
-    cond === "mist" ||
-    cond === "fog" ||
-    cond === "freezing fog" ||
-    cond === "thundery outbreaks possible"
-  ) {
-    sliderIcon.src = "../SVGs/cloudy.svg";
+  if (getCloudyConditions().includes(cond)) {
+    weatherIcon.src = "../SVGs/cloudy.svg";
     iconSet = true;
   }
-
-  if (
-    cond === "patchy rain possible" ||
-    cond === "patchy rain nearby" ||
-    cond === "patchy light drizzle" ||
-    cond === "light drizzle" ||
-    cond === "freezing drizzle" ||
-    cond === "heavy freezing drizzle" ||
-    cond === "patchy light rain" ||
-    cond === "light rain" ||
-    cond === "moderate rain at times" ||
-    cond === "moderate rain" ||
-    cond === "heavy rain at times" ||
-    cond === "heavy rain" ||
-    cond === "light freezing rain" ||
-    cond === "moderate or heavy freezing rain" ||
-    cond === "light sleet" ||
-    cond === "moderate or heavy sleet" ||
-    cond === "light rain shower" ||
-    cond === "moderate or heavy rain shower" ||
-    cond === "torrential rain shower" ||
-    cond === "light sleet showers" ||
-    cond === "moderate or heavy sleet showers" ||
-    cond === "patchy sleet possible" ||
-    cond === "patchy freezing drizzle possible" ||
-    cond === "thundery outbreaks in nearby" ||
-    cond === "patchy light rain with thunder" ||
-    cond === "moderate or heavy rain with thunder" ||
-    cond === "patchy light snow with thunder" ||
-    cond === "moderate or heavy snow with thunder"
-  ) {
-    sliderIcon.src = "../SVGs/rainy.svg";
+  if (getRainyConditions().includes(cond)) {
+    weatherIcon.src = "../SVGs/rainy.svg";
     iconSet = true;
   }
-
-  if (
-    cond === "patchy snow possible" ||
-    cond === "patchy light snow" ||
-    cond === "light snow" ||
-    cond === "patchy moderate snow" ||
-    cond === "moderate snow" ||
-    cond === "patchy heavy snow" ||
-    cond === "heavy snow" ||
-    cond === "light snow showers" ||
-    cond === "moderate or heavy snow showers" ||
-    cond === "blowing snow" ||
-    cond === "blizzard" ||
-    cond === "ice pellets" ||
-    cond === "light showers of ice pellets" ||
-    cond === "moderate or heavy showers of ice pellets"
-  ) {
-    sliderIcon.src = "../SVGs/snowy.svg";
+  if (getSnowyConditions().includes(cond)) {
+    weatherIcon.src = "../SVGs/snowy.svg";
     iconSet = true;
   }
   if (!iconSet) {
     console.warn("⚠️ No icon matched for condition:", cond);
   }
 
-  return sliderIcon;
+  return weatherIcon;
 }
 
-function generateTemperature(forecastData, nextHour) {
+function setTemperature(forecastData, nextHour) {
   const sliderTemperature = document.createElement("p");
   sliderTemperature.classList.add("slider-temperature");
   const temperatureText = document.createTextNode(
@@ -147,21 +100,19 @@ async function setSliderTrio(forecastData) {
     const nextHour = getNextHour.toString().padStart(2, "0");
 
     //⏰ GET TIME
-    const sliderTime = generateHour(nextHour, i);
+    const sliderTime = setHour(nextHour, i);
     //🌥️ DISPLAY ICON
     const night = await isNight(forecastData);
     const conditions =
       forecastData.hourlyForecast[parseInt(nextHour)].condition.text;
-
-    const sliderIcon = generateIcon(nextHour, conditions, night);
+    const weatherIcon = setWeatherIcon(conditions, night);
     //🌡️ DISPLAY TEMPERATURE
-    const sliderTemperature = generateTemperature(forecastData, nextHour);
-
+    const sliderTemperature = setTemperature(forecastData, nextHour);
     //APPEND CONTENTS TO TRIO
-    sliderTrio.append(sliderTime, sliderIcon, sliderTemperature);
+    sliderTrio.append(sliderTime, weatherIcon, sliderTemperature);
     //APPEND TRIO CONTAINER TO SLIDER CONTAINER
     sliderContents.appendChild(sliderTrio);
   }
 }
 
-export { setSliderTrio };
+export { setSliderTrio, setWeatherIcon };
