@@ -129,14 +129,101 @@
               </div>
             </div>
             <!-- WIND -->
-            <div class="wind cards"></div>
-            <!-- ARI-QUALITY -->
+            <div class="wind cards">
+              <div class="wind-header">
+                <span class="material-symbols-outlined wind-icon"> air </span>
+                <p>Wind</p>
+              </div>
+              <div class="wind-content">
+                <div class="wind-speed">
+                  <span class="wind-text">Wind</span>
+                  <span class="wind-value">10m/s</span>
+                </div>
+                <hr />
+                <div class="wind-gusts">
+                  <span class="wind-text">Gusts</span>
+                  <span class="wind-value">12m/s</span>
+                </div>
+                <hr />
+                <div class="wind-direction">
+                  <span class="wind-text">Direction</span>
+                  <span class="wind-value">10° N</span>
+                </div>
+              </div>
+            </div>
+            <!-- AIR-QUALITY -->
             <div class="air cards"></div>
             <div class="uvindex cards"></div>
-            <div class="sunset cards"></div>
-            <div class="feelslike cards"></div>
-            <div class="humidity cards"></div>
-            <div class="visibility cards"></div>
+            <!-- SUNSET -->
+            <div class="sunset cards">
+              <div class="sunset-header">
+                <span class="material-symbols-outlined sunset-icon">
+                  wb_twilight
+                </span>
+                <p>Sunset</p>
+              </div>
+              <div class="sunset-content">
+                <p id="sunset-time">22:46</p>
+                <div class="sunset-animation-container">
+                  <div class="sun-anim-stripe"></div>
+
+                  <div class="sun-anim-ball"></div>
+                  <div class="sun-anim-hide-left"></div>
+                  <div class="sun-anim-hide-right"></div>
+                  <div class="sunset-animation-stop-left">
+                    <span>|</span>
+                  </div>
+                  <div class="sunset-animation-stop-right">
+                    <span>|</span>
+                  </div>
+                </div>
+                <p id="sunset-caption">Sunrise: 4:32</p>
+              </div>
+            </div>
+            <div class="feelslike cards">
+              <div class="feelslike-header">
+                <span class="material-symbols-outlined feelslike-icon">
+                  cool_to_dry
+                </span>
+                <p>Feels like</p>
+              </div>
+              <div class="feelslike-content">
+                <div class="feelslike-new-number-container">
+                  <p id="feelslike-new-number">12°</p>
+                  <div class="feelslike-difference">
+                    <span class="material-symbols-outlined"> south </span>
+                    <p>4°</p>
+                  </div>
+                </div>
+                <p id="feelslike-actual-number">Actual 16°</p>
+                <p id="feelslike-caption">It feels warmer.</p>
+              </div>
+            </div>
+            <!-- HUMIDITY -->
+            <div class="humidity cards">
+              <div class="humidity-header">
+                <span class="material-symbols-outlined humidity-icon">
+                  cool_to_dry
+                </span>
+                <p>Humidity</p>
+              </div>
+              <div class="humidity-content">
+                <p id="humidity-percentage">82%</p>
+                <p id="humidity-caption">The dew point is 7° right now.</p>
+              </div>
+            </div>
+            <div class="visibility cards">
+              <div class="visibility-header">
+                <span class="material-symbols-outlined visibility-icon">
+                  visibility
+                </span>
+                <p>Visibility</p>
+              </div>
+              <div class="visibility-content">
+                <p id="visibility-number">28km</p>
+                <p id="visibility-caption">Perfectly clear view.</p>
+              </div>
+            </div>
             <!-- === Arrow Right === -->
             <div id="right-arrow"></div>
           </div>
