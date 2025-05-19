@@ -2,6 +2,10 @@ import { setSliderTrio } from "./Slider-card.js";
 import { setHeader } from "./header.js";
 import { getRainMap } from "./rain-map.js";
 import { setFutureForecast } from "./10-day-forecast.js";
+import { setVisibility } from "./visibility-km.js";
+import { setHumidity } from "./humidity.js";
+import { setWind } from "./wind.js";
+import { setAirQuality } from "./air-quality.js";
 
 const search = document.querySelector(".search");
 //THIS IS UPDATING ON GETWEATHER, NOT REQUESTWEATHER
@@ -42,10 +46,13 @@ async function getWeather(city = "copenhagen") {
     windSpeed: `${Math.round(weather.current.wind_kph / 3.6)} m/s`,
     windGusts: `${Math.round(weather.current.gust_kph / 3.6)} m/s`,
     windDirection: `${weather.current.wind_degree}° ${weather.current.wind_dir}`,
+    visibility: weather.current.vis_km,
+    humidity: `${weather.current.humidity}%`,
+    dewPoint: Math.round(weather.current.dewpoint_c),
     futureForecast: weather.forecast.forecastday,
     dailyForecast: weather.forecast.forecastday[0],
     hourlyForecast: weather.forecast.forecastday[0].hour,
-    timezone: weather.location.tz_id,
+    cityTimezone: weather.location.tz_id,
     city: weather.location.name,
     longitude: weather.location.lon,
     latitude: weather.location.lat,
@@ -57,10 +64,9 @@ async function getWeather(city = "copenhagen") {
 }
 
 // GET CURRENT HOUR
-async function getCurrentHour(forecastData) {
+async function getCurrentHour({ cityTimezone }) {
   const currentDay = new Date();
-  const timezone = await forecastData.timezone;
-  const options = { hour: "numeric", timeZone: timezone, hour12: false };
+  const options = { hour: "numeric", timeZone: cityTimezone, hour12: false };
   const currentHour = parseInt(
     new Intl.DateTimeFormat("default", options).format(currentDay)
   );
@@ -79,6 +85,10 @@ async function setHomeUI(forecastData) {
   await setSliderTrio(forecastData);
   await getRainMap(forecastData);
   await setFutureForecast(forecastData);
+  setVisibility(forecastData);
+  setHumidity(forecastData);
+  setWind(forecastData);
+  setAirQuality(forecastData);
 }
 
 getWeather().then((forecastData) => {

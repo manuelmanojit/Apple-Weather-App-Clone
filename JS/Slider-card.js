@@ -83,7 +83,7 @@ function setTemperature(forecastData, nextHour) {
 }
 
 async function setSliderTrio(forecastData) {
-  const currentHour = await getCurrentHour(forecastData);
+  const currentHour = await getCurrentHour(forecastData.cityTimezone);
   const sliderContents = document.querySelector(".slider-contents");
 
   // Clear the existing content by setting innerHTML to an empty string

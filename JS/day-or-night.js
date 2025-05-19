@@ -38,7 +38,7 @@ async function getSunsetTime(forecastData) {
 
 async function isNight(forecastData) {
   //if the current hour is
-  const now = await getCurrentHour(forecastData);
+  const now = await getCurrentHour(forecastData.cityTimezone);
   const sunrise = await getSunriseTime(forecastData);
   const sunset = await getSunsetTime(forecastData);
 
