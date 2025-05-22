@@ -6,6 +6,8 @@ import { setVisibility } from "./visibility-km.js";
 import { setHumidity } from "./humidity.js";
 import { setWind } from "./wind.js";
 import { setAirQuality } from "./air-quality.js";
+import { getFeelsLike } from "./feels-like.js";
+import { setUvIndex } from "./uv-index.js";
 
 const search = document.querySelector(".search");
 //THIS IS UPDATING ON GETWEATHER, NOT REQUESTWEATHER
@@ -14,7 +16,6 @@ search.addEventListener("keydown", async (e) => {
     let newCity = search.value;
     const forecast = await getWeather(newCity);
     await setHomeUI(forecast);
-    console.log(newCity);
   }
 });
 
@@ -40,9 +41,9 @@ async function getWeather(city = "copenhagen") {
     temperature: Math.round(weather.current.temp_c),
     tempMax: Math.round(weather.forecast.forecastday[0].day.maxtemp_c),
     tempMin: Math.round(weather.forecast.forecastday[0].day.mintemp_c),
-    feelsLike: weather.current["feelslike_c"],
+    feelsLike: Math.round(weather.current.feelslike_c),
     airQuality: weather.current.air_quality["us-epa-index"],
-    uvIndex: weather.current.uv,
+    uvIndex: Math.round(weather.current.uv),
     windSpeed: `${Math.round(weather.current.wind_kph / 3.6)} m/s`,
     windGusts: `${Math.round(weather.current.gust_kph / 3.6)} m/s`,
     windDirection: `${weather.current.wind_degree}° ${weather.current.wind_dir}`,
@@ -64,9 +65,10 @@ async function getWeather(city = "copenhagen") {
 }
 
 // GET CURRENT HOUR
-async function getCurrentHour({ cityTimezone }) {
+async function getCurrentHour(forecastData) {
+  const timezone = forecastData.cityTimezone;
   const currentDay = new Date();
-  const options = { hour: "numeric", timeZone: cityTimezone, hour12: false };
+  const options = { hour: "numeric", timeZone: timezone, hour12: false };
   const currentHour = parseInt(
     new Intl.DateTimeFormat("default", options).format(currentDay)
   );
@@ -89,6 +91,8 @@ async function setHomeUI(forecastData) {
   setHumidity(forecastData);
   setWind(forecastData);
   setAirQuality(forecastData);
+  await getFeelsLike(forecastData);
+  await setUvIndex(forecastData);
 }
 
 getWeather().then((forecastData) => {

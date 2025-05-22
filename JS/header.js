@@ -1,5 +1,3 @@
-import { getWeather } from "./main.js";
-
 async function setHeader(forecastData) {
   const city = document.querySelector("header .city");
   city.innerHTML = "";

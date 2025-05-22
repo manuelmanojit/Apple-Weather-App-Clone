@@ -1,4 +1,4 @@
-import { getCurrentHour, getWeather } from "./main.js";
+import { getCurrentHour } from "./main.js";
 import { isNight } from "./day-or-night.js";
 import {
   getClearConditions,
@@ -75,15 +75,15 @@ function setWeatherIcon(conditions, isNight) {
 function setTemperature(forecastData, nextHour) {
   const sliderTemperature = document.createElement("p");
   sliderTemperature.classList.add("slider-temperature");
-  const temperatureText = document.createTextNode(
-    `${Math.round(forecastData.hourlyForecast[parseInt(nextHour)].temp_c)}°`
-  );
-  sliderTemperature.appendChild(temperatureText);
+  sliderTemperature.textContent = `${Math.round(
+    forecastData.hourlyForecast[parseInt(nextHour)].temp_c
+  )}°`;
   return sliderTemperature;
 }
 
 async function setSliderTrio(forecastData) {
-  const currentHour = await getCurrentHour(forecastData.cityTimezone);
+  const currentHour = await getCurrentHour(forecastData);
+
   const sliderContents = document.querySelector(".slider-contents");
 
   // Clear the existing content by setting innerHTML to an empty string
@@ -96,13 +96,15 @@ async function setSliderTrio(forecastData) {
     sliderTrio.classList.add("slider-trio");
     //MAKE TIME INCREASE BY "i" AT EACH LOOP (first is time + 0)
     const getNextHour = (currentHour + i) % 24;
+    console.log(getNextHour);
+
     //ADD A "0" AT THE BEGINNING OF EACH SINGLE NUMBER
     const nextHour = getNextHour.toString().padStart(2, "0");
 
     //⏰ GET TIME
     const sliderTime = setHour(nextHour, i);
     //🌥️ DISPLAY ICON
-    const night = await isNight(forecastData);
+    const night = await isNight(forecastData, getNextHour);
     const conditions =
       forecastData.hourlyForecast[parseInt(nextHour)].condition.text;
     const weatherIcon = setWeatherIcon(conditions, night);

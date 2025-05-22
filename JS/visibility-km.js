@@ -1,6 +1,5 @@
 function getVisibilityCaption(forecastData) {
   const v = forecastData.visibility;
-  console.log(v);
 
   if (v >= 20) return "Perfectly clear view";
   if (v >= 10) return "Very clear view at the moment.";

@@ -17,6 +17,7 @@ const rainyConditions = [
   "freezing drizzle",
   "heavy freezing drizzle",
   "patchy light rain",
+  "patchy light rain in area with thunder",
   "light rain",
   "moderate rain at times",
   "moderate rain",

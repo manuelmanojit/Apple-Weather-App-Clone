@@ -1,5 +1,27 @@
-async function getAirQuality(forecastData) {
-  const aqi = forecastData.airQuality;
+function getCachedAqi(aqi, city) {
+  const cacheKey = `cachedAqi-${city.toLowerCase()}`;
+
+  if (aqi >= 1 && aqi <= 6) {
+    localStorage.setItem(cacheKey, aqi);
+    return aqi;
+  }
+
+  const cached = localStorage.getItem(cacheKey);
+  console.log(cached);
+
+  if (cached !== null) {
+    console.warn("Data missing or invalid. Using cached value as a fallback.");
+    return parseInt(cached, 10);
+  }
+
+  console.warn("Data missing or invalid");
+  return null;
+}
+
+function getAirQuality(forecastData) {
+  const aqi = getCachedAqi(forecastData.airQuality, forecastData.city);
+  if (!aqi) return;
+
   const titleText = document.querySelector("#air-text");
   let title;
   if (aqi === 1) return (title = "Good");
@@ -7,6 +29,7 @@ async function getAirQuality(forecastData) {
   if (aqi === 3) {
     title = "Unhealthy for Sensitive Groups";
     titleText.style.fontSize = "1rem";
+    return title;
   }
   if (aqi === 4) return (title = "Unhealthy");
   if (aqi === 5) return (title = "Very Unhealthy");
@@ -14,9 +37,8 @@ async function getAirQuality(forecastData) {
   console.warn("Invalid AQI value");
   return title;
 }
-
-async function getAqiCaption(forecastData) {
-  const aqi = forecastData.airQuality;
+function getAqiCaption(forecastData) {
+  const aqi = getCachedAqi(forecastData.airQuality, forecastData.city);
   let resp;
   if (aqi === 1) return (resp = "Air quality is clean and poses little risk.");
   if (aqi === 2)
@@ -33,9 +55,11 @@ async function getAqiCaption(forecastData) {
   return resp;
 }
 
-async function makeBallMove(forecastData) {
-  const aqi = forecastData.airQuality;
+function makeBallMove(forecastData) {
+  const aqi = getCachedAqi(forecastData.airQuality, forecastData.city);
+  if (!aqi) return;
   const ball = document.querySelector(".air-anim-ball");
+  //DIVIDED THE STRIPE IN 6 BLOCKS SINCE THERE ARE 6 VALUES, AND MADE THE BALL MOVE IN THE MIDDLE OF EACH OF THE 6 BLOCKS
   if (aqi === 1) return (ball.style.left = "8.3%");
   if (aqi === 2) return (ball.style.left = "25%");
   if (aqi === 3) return (ball.style.left = "41.6%");
@@ -45,12 +69,12 @@ async function makeBallMove(forecastData) {
   console.warn("Invalid AQI value");
 }
 
-async function setAirQuality(forecastData) {
-  const aqi = await getAirQuality(forecastData);
-  const sentence = await getAqiCaption(forecastData);
+function setAirQuality(forecastData) {
+  const aqiTitle = getAirQuality(forecastData);
+  const sentence = getAqiCaption(forecastData);
 
   const airQuality = document.querySelector("#air-text");
-  airQuality.textContent = aqi;
+  airQuality.textContent = aqiTitle;
 
   makeBallMove(forecastData);
 

@@ -35,6 +35,7 @@
     <script type="module" src="../JS/Slider-card.js" defer></script>
     <script type="module" src="../JS/day-or-night.js" defer></script>
     <script type="module" src="../JS/air-quality.js" defer></script>
+    <script type="module" src="../JS/uv-index.js" defer></script>
   </head>
 
   <body>
@@ -97,12 +98,12 @@
             <!-- WEATHER GRID -->
             <div class="slider cards">
               <div class="slider-header">
-                <p>
-                  Sunny conditions will continue for the rest of the day. Wind
-                  gusts are up to 5 m/s
-                </p>
-                <hr />
+                <span class="material-symbols-outlined slider-icon">
+                  update
+                </span>
+                <p>the next 24 hours</p>
               </div>
+              <hr />
               <div class="slider-contents"></div>
             </div>
             <!-- FORECAST 10-DAY -->
@@ -155,7 +156,7 @@
             <div class="air cards">
               <div class="air-header">
                 <span class="material-symbols-outlined air-icon"> grain </span>
-                <p>air quality</p>
+                <p>air pollution</p>
               </div>
               <div class="air-content">
                 <p id="air-text"></p>
@@ -186,7 +187,7 @@
                   <div class="uvindex-anim-ball"></div>
                 </div>
                 <div>
-                  <p id="uvindex-caption">Use sun protection today.</p>
+                  <p id="uvindex-caption"></p>
                 </div>
               </div>
             </div>
@@ -216,6 +217,7 @@
                 <p id="sunset-caption">Sunrise: 4:32</p>
               </div>
             </div>
+            <!-- FEELS LIKE  -->
             <div class="feelslike cards">
               <div class="feelslike-header">
                 <span class="material-symbols-outlined feelslike-icon">
@@ -225,14 +227,14 @@
               </div>
               <div class="feelslike-content">
                 <div class="feelslike-new-number-container">
-                  <p id="feelslike-new-number">12°</p>
+                  <p class="feelslike-new-number"></p>
                   <div class="feelslike-difference">
                     <span class="material-symbols-outlined"> south </span>
                     <p>4°</p>
                   </div>
                 </div>
-                <p id="feelslike-actual-number">Actual 16°</p>
-                <p id="feelslike-caption">It feels warmer.</p>
+                <p class="feelslike-actual-number"></p>
+                <p class="feelslike-caption"></p>
               </div>
             </div>
             <!-- HUMIDITY -->

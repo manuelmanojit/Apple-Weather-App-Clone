@@ -96,13 +96,15 @@ main {
 #current-weather-container .city {
   font-size: 1.65rem;
   font-weight: 350;
-  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.25);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+  margin-bottom: 5px;
 }
 
 #current-weather-container .temperature {
   font-size: 3.5rem;
   font-weight: 200;
-  text-shadow: 2px 3px 6px rgba(0, 0, 0, 0.35);
+  text-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+  margin-bottom: 5px;
 }
 
 #current-weather-container .condition {
@@ -110,6 +112,7 @@ main {
   font-weight: 450;
   color: #bbe0ff;
   text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.15);
+  margin-bottom: 5px;
 }
 
 .max-min span {
@@ -181,6 +184,7 @@ main {
 .slider {
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
 .slider-contents {
@@ -189,6 +193,7 @@ main {
   height: calc(145px - 31.5px);
   width: auto;
   padding-left: 10px;
+  margin-block: 5px;
   overflow-x: scroll;
   /* Hide scrollbar */
   scrollbar-width: none; /* Firefox */
@@ -199,18 +204,34 @@ main {
   display: none; /* Chrome/Safari */
 }
 
-.slider-header > p {
+.slider-header {
+  display: flex;
   height: auto;
-  color: white;
-  font-size: 0.67rem;
-  font-weight: 400;
-  letter-spacing: 0.25px;
-  margin: 8px auto 8px 10px;
+  width: 100%;
+  align-items: center;
+  padding-block: 10px;
 }
 
-.slider-header > hr {
+.slider-icon {
+  font-size: 0.8rem !important;
+  color: #88b4e1;
+  margin-left: 10px;
+  margin-right: 5px;
+}
+
+.slider-header > p {
+  margin-top: 1px;
+  text-transform: uppercase;
+  height: auto;
+  color: #88b4e1;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.25px;
+}
+
+.slider hr {
   width: calc(100% - 10px);
-  border: 0.25px solid rgba(255, 255, 255, 0.35);
+  border: 0.25px solid rgba(255, 255, 255, 0.15);
   margin-left: 10px;
 }
 
@@ -596,7 +617,7 @@ div.leaflet-top.leaflet-left {
   gap: 2px;
   color: white;
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.35);
-  background-color: rgba(62, 200, 177, 0.67);
+  background-color: rgb(243, 163, 59);
   border-radius: 10px;
 }
 .feelslike-difference span {
@@ -611,20 +632,20 @@ div.leaflet-top.leaflet-left {
   font-weight: 500;
 }
 
-.feelslike-content #feelslike-new-number {
+.feelslike-new-number {
   font-size: 1.55rem;
   font-weight: 350;
   margin-right: 15px;
 }
 
-.feelslike-content #feelslike-actual-number {
+.feelslike-actual-number {
   font-size: 1rem;
   font-weight: 450;
   color: #b6dafd;
   opacity: 0.75;
 }
 
-.feelslike-content #feelslike-caption {
+.feelslike-caption {
   font-size: 0.6rem;
   font-weight: 350;
 }
@@ -763,11 +784,11 @@ div.leaflet-top.leaflet-left {
 }
 
 .uvindex-anim-ball {
+  margin-left: 11px;
   position: absolute;
   background-color: rgb(253, 255, 182);
   height: 5px;
   width: 5px;
-  left: 50%;
   outline: 1.5px solid rgba(65, 65, 65, 0.75);
   border-radius: 50%;
 }

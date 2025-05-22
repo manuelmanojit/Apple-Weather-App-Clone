@@ -1,9 +1,5 @@
-import { getWeather } from "./main.js";
-
-// function setRainMapCard() {
-//   const
-// }
 let map = L.map("rain-map");
+
 async function getRainMap(forecastData) {
   map.setView([forecastData.latitude, forecastData.longitude], 10);
   // A base map to provide context. OpenStreetMap is a common choice
