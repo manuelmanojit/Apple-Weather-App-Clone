@@ -8,6 +8,8 @@ import { setWind } from "./wind.js";
 import { setAirQuality } from "./air-quality.js";
 import { getFeelsLike } from "./feels-like.js";
 import { setUvIndex } from "./uv-index.js";
+import { moveSunBall } from "./sunset.js";
+import { setBackground } from "./set-background.js";
 
 const search = document.querySelector(".search");
 //THIS IS UPDATING ON GETWEATHER, NOT REQUESTWEATHER
@@ -20,7 +22,7 @@ search.addEventListener("keydown", async (e) => {
 });
 
 async function getWeather(city = "copenhagen") {
-  const API = "138593b09da6432e891161652250905";
+  const API = "e6f33b99dee14f6b96c64046252405";
   const weatherURL = `https://api.weatherapi.com/v1/forecast.json?key=${API}&q=${city}&days=10&aqi=yes&alerts=no`;
   const astronomyURL = `https://api.weatherapi.com/v1/astronomy.json?key=${API}&q=${city}`;
   //WEATHER REQUEST
@@ -64,8 +66,19 @@ async function getWeather(city = "copenhagen") {
   return forecast;
 }
 
-// GET CURRENT HOUR
-async function getCurrentHour(forecastData) {
+function formatTime(timeString) {
+  const [time, period] = timeString.split(" ");
+  let [hour, minutes] = time.split(":").map((value) => Number(value));
+
+  if (period === "AM" && hour === "12") hour = 0;
+  if (period === "PM" && hour !== "12") hour += 12;
+
+  return `${hour.toString().padStart(2, "0")}:${minutes
+    .toString()
+    .padStart(2, "0")}`;
+}
+
+function getCurrentHour(forecastData) {
   const timezone = forecastData.cityTimezone;
   const currentDay = new Date();
   const options = { hour: "numeric", timeZone: timezone, hour12: false };
@@ -75,28 +88,31 @@ async function getCurrentHour(forecastData) {
   return currentHour;
 }
 
-async function getDate(forecastData, currentDay) {
-  const day = await forecastData.futureForecast[currentDay].date;
+function getDate(forecastData, currentDay) {
+  const day = forecastData.futureForecast[currentDay].date;
   const date = new Date(day);
   const name = date.toLocaleDateString(undefined, { weekday: "short" });
   return name;
 }
 
 async function setHomeUI(forecastData) {
-  await setHeader(forecastData);
-  await setSliderTrio(forecastData);
   await getRainMap(forecastData);
-  await setFutureForecast(forecastData);
+
+  setHeader(forecastData);
+  setSliderTrio(forecastData);
   setVisibility(forecastData);
   setHumidity(forecastData);
   setWind(forecastData);
   setAirQuality(forecastData);
-  await getFeelsLike(forecastData);
-  await setUvIndex(forecastData);
+  getFeelsLike(forecastData);
+  setUvIndex(forecastData);
+  moveSunBall(forecastData);
+  setFutureForecast(forecastData);
+  setBackground(forecastData);
 }
 
 getWeather().then((forecastData) => {
   setHomeUI(forecastData);
 });
 
-export { getCurrentHour, getWeather, getDate };
+export { getCurrentHour, getWeather, getDate, formatTime };

@@ -1,4 +1,4 @@
-async function setHeader(forecastData) {
+function setHeader(forecastData) {
   const city = document.querySelector("header .city");
   city.innerHTML = "";
   const cityText = document.createTextNode(forecastData.city);

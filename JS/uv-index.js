@@ -1,10 +1,10 @@
 import { getCurrentHour } from "./main.js";
 import { isNight } from "./day-or-night.js";
 
-async function getSunProtectionRequirement(forecastData) {
+function getSunProtectionRequirement(forecastData) {
   const hourlyForecast = forecastData.hourlyForecast;
-  const currentHour = await getCurrentHour(forecastData);
-  const night = await isNight(forecastData);
+  const currentHour = getCurrentHour(forecastData);
+  const night = isNight(forecastData);
 
   //loop through each of them and find uvindex
   const uvList = [];
@@ -45,16 +45,16 @@ function makeBallMove(forecastData) {
   const ball = document.querySelector(".uvindex-anim-ball");
 
   if (uv === 0) return (ball.style.left = "0%");
-  if (uv >= 1 && uv <= 2) return (ball.style.left = "15%");
-  if (uv >= 3 && uv <= 5) return (ball.style.left = "35%");
-  if (uv >= 6 && uv <= 7) return (ball.style.left = "55%");
-  if (uv >= 8 && uv <= 10) return (ball.style.left = "75%");
-  if (uv >= 11) return (ball.style.left = "95%");
+  if (uv >= 1 && uv <= 2) return (ball.style.left = "10%");
+  if (uv >= 3 && uv <= 5) return (ball.style.left = "30%");
+  if (uv >= 6 && uv <= 7) return (ball.style.left = "50%");
+  if (uv >= 8 && uv <= 10) return (ball.style.left = "70%");
+  if (uv >= 11) return (ball.style.left = "90%");
 
   console.warn("Invalid UV Index value");
 }
 
-async function setUvIndex(forecastData) {
+function setUvIndex(forecastData) {
   const uvIndexNumber = forecastData.uvIndex;
   const uvText = getUvIndexLevel(forecastData);
 
@@ -69,7 +69,7 @@ async function setUvIndex(forecastData) {
   //Move animation ball
   makeBallMove(forecastData);
   //Tell the user when to use sun protection
-  await getSunProtectionRequirement(forecastData);
+  getSunProtectionRequirement(forecastData);
 }
 
 export { setUvIndex };

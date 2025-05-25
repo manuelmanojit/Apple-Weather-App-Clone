@@ -49,7 +49,7 @@ function setSameTemperatureUI() {
   caption.textContent = "It feels the same as the actual temperature.";
 }
 
-async function getFeelsLike(forecastData) {
+function getFeelsLike(forecastData) {
   const temperature = forecastData.temperature;
   const feelsLike = forecastData.feelsLike;
 

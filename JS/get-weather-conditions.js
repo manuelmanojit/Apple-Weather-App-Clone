@@ -8,9 +8,12 @@ const cloudyConditions = [
   "fog",
   "freezing fog",
   "thundery outbreaks possible",
+  "patchy rain possible",
+  "patchy sleet possible",
+  "patchy freezing drizzle possible",
+  "thundery outbreaks possible",
 ];
 const rainyConditions = [
-  "patchy rain possible",
   "patchy rain nearby",
   "patchy light drizzle",
   "light drizzle",
@@ -32,8 +35,6 @@ const rainyConditions = [
   "torrential rain shower",
   "light sleet showers",
   "moderate or heavy sleet showers",
-  "patchy sleet possible",
-  "patchy freezing drizzle possible",
   "thundery outbreaks in nearby",
   "patchy light rain with thunder",
   "moderate or heavy rain with thunder",

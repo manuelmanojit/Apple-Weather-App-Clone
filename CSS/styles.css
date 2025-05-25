@@ -7,10 +7,6 @@
 }
 
 body {
-  background-image: url("../IMGs/sunny-sky.png");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
   height: 100vh;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     sans-serif;
@@ -34,7 +30,10 @@ nav {
 
 /* RIGHT SIDE OF THE PAGE */
 
-main {
+#main-container {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   flex-grow: 1;
 }
 
@@ -96,29 +95,29 @@ main {
 #current-weather-container .city {
   font-size: 1.65rem;
   font-weight: 350;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   margin-bottom: 5px;
 }
 
 #current-weather-container .temperature {
   font-size: 3.5rem;
   font-weight: 200;
-  text-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+  text-shadow: 2px 3px 5px rgba(0, 0, 0, 0.3);
   margin-bottom: 5px;
 }
 
 #current-weather-container .condition {
   font-size: 1rem;
-  font-weight: 450;
-  color: #bbe0ff;
-  text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.15);
+  font-weight: 550;
+  color: rgb(201, 232, 255);
+  text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.3);
   margin-bottom: 5px;
 }
 
 .max-min span {
   font-size: 0.95rem;
   font-weight: 500;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.25);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* WEATHER CARDS */
@@ -135,7 +134,7 @@ main {
 
 .cards {
   border-radius: 10px;
-  background-color: #0c497840; /* use rgba instead of opacity */
+  background-color: rgba(18, 68, 104, 0.238); /* use rgba instead of opacity */
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px); /* Safari support */
 }
@@ -192,7 +191,6 @@ main {
   align-items: center;
   height: calc(145px - 31.5px);
   width: auto;
-  padding-left: 10px;
   margin-block: 5px;
   overflow-x: scroll;
   /* Hide scrollbar */
@@ -214,7 +212,7 @@ main {
 
 .slider-icon {
   font-size: 0.8rem !important;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   margin-left: 10px;
   margin-right: 5px;
 }
@@ -223,7 +221,7 @@ main {
   margin-top: 1px;
   text-transform: uppercase;
   height: auto;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.25px;
@@ -240,14 +238,14 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  min-width: 30px;
+  width: auto;
   height: 100%;
-  margin-right: 21px;
+  margin-inline: 18px;
 }
 
 .slider-trio > p {
   color: white;
-  font-size: 0.825rem;
+  font-size: 0.9rem;
   font-weight: 550;
 }
 
@@ -295,7 +293,7 @@ main {
 
 .calendar-icon {
   font-size: 0.8rem !important;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   margin-left: 10px;
   margin-right: 5px;
 }
@@ -303,7 +301,7 @@ main {
 .forecast-header > p {
   text-transform: uppercase;
   height: auto;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.25px;
@@ -351,8 +349,8 @@ main {
 }
 
 .min-temperature {
-  color: #b6dafd;
-  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.9rem;
   font-weight: 450;
   letter-spacing: 0.25px;
   width: 36px;
@@ -360,8 +358,8 @@ main {
 
 .max-temperature {
   color: white;
-  font-size: 1rem;
-  font-weight: 450;
+  font-size: 0.9rem;
+  font-weight: 550;
   letter-spacing: 0.25px;
 }
 
@@ -383,7 +381,7 @@ main {
 
 .air-icon {
   font-size: 0.825rem !important;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   margin-left: 10px;
   margin-right: 5px;
 }
@@ -391,7 +389,7 @@ main {
 .air-header > p {
   text-transform: uppercase;
   height: auto;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.25px;
@@ -484,7 +482,7 @@ main {
 
 .water-drop {
   font-size: 0.9rem !important;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   margin-left: 10px;
   margin-right: 5px;
 }
@@ -492,7 +490,7 @@ main {
 .rainmap-header > p {
   text-transform: uppercase;
   height: auto;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.25px;
@@ -575,7 +573,7 @@ div.leaflet-top.leaflet-left {
 
 .feelslike-icon {
   font-size: 0.825rem !important;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   margin-left: 10px;
   margin-right: 5px;
 }
@@ -583,7 +581,7 @@ div.leaflet-top.leaflet-left {
 .feelslike-header > p {
   text-transform: uppercase;
   height: auto;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.25px;
@@ -639,9 +637,9 @@ div.leaflet-top.leaflet-left {
 }
 
 .feelslike-actual-number {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 450;
-  color: #b6dafd;
+  color: rgba(255, 255, 255, 0.75);
   opacity: 0.75;
 }
 
@@ -666,7 +664,7 @@ div.leaflet-top.leaflet-left {
 
 .wind-icon {
   font-size: 0.825rem !important;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   margin-left: 10px;
   margin-right: 5px;
 }
@@ -674,7 +672,7 @@ div.leaflet-top.leaflet-left {
 .wind-header > p {
   text-transform: uppercase;
   height: auto;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.25px;
@@ -711,7 +709,7 @@ div.leaflet-top.leaflet-left {
 }
 
 .wind-value {
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   font-weight: 600;
   font-size: 0.7rem;
 }
@@ -733,7 +731,7 @@ div.leaflet-top.leaflet-left {
 
 .uvindex-icon {
   font-size: 0.825rem !important;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   margin-left: 10px;
   margin-right: 5px;
 }
@@ -741,7 +739,7 @@ div.leaflet-top.leaflet-left {
 .uvindex-header > p {
   text-transform: uppercase;
   height: auto;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.25px;
@@ -831,7 +829,7 @@ div.leaflet-top.leaflet-left {
 
 .sunset-icon {
   font-size: 0.825rem !important;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   margin-left: 10px;
   margin-right: 5px;
 }
@@ -839,7 +837,7 @@ div.leaflet-top.leaflet-left {
 .sunset-header > p {
   text-transform: uppercase;
   height: auto;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.25px;
@@ -875,6 +873,7 @@ div.leaflet-top.leaflet-left {
   color: rgb(255, 255, 255);
   font-weight: 100;
   font-size: 1rem;
+  overflow: hidden;
 }
 
 .sun-anim-hide-left {
@@ -915,19 +914,10 @@ div.leaflet-top.leaflet-left {
   opacity: 0.75;
 }
 
-.sun-anim-ball {
-  position: absolute;
-  background-color: rgb(253, 255, 182);
-  height: 10px;
-  width: 10px;
-  box-shadow: 0px 0px 5px 2px rgba(255, 255, 255, 0.75);
-  left: calc(145px - 27.5px);
-  border-radius: 50%;
-  mix-blend-mode: screen;
-}
-
 .sun-anim-stripe {
-  position: absolute;
+  display: flex;
+  align-items: center;
+  position: relative;
   background-image: linear-gradient(
     to right,
     rgba(205, 246, 206, 0.5),
@@ -936,6 +926,19 @@ div.leaflet-top.leaflet-left {
   );
   height: 4px;
   width: calc(100% - 45px);
+}
+
+.sun-anim-ball {
+  display: block;
+  position: absolute;
+  left: auto;
+  right: auto;
+  background-color: rgb(253, 255, 182);
+  height: 10px;
+  width: 10px;
+  box-shadow: 0px 0px 5px 2px rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+  mix-blend-mode: screen;
 }
 
 .sunset-content #sunset-caption {
@@ -961,7 +964,7 @@ div.leaflet-top.leaflet-left {
 
 .humidity-icon {
   font-size: 0.825rem !important;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   margin-left: 10px;
   margin-right: 5px;
 }
@@ -969,7 +972,7 @@ div.leaflet-top.leaflet-left {
 .humidity-header > p {
   text-transform: uppercase;
   height: auto;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.25px;
@@ -1016,7 +1019,7 @@ div.leaflet-top.leaflet-left {
 
 .visibility-icon {
   font-size: 0.9rem !important;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   margin-left: 10px;
   margin-right: 5px;
 }
@@ -1024,7 +1027,7 @@ div.leaflet-top.leaflet-left {
 .visibility-header > p {
   text-transform: uppercase;
   height: auto;
-  color: #88b4e1;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.25px;

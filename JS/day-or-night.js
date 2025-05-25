@@ -1,7 +1,5 @@
-import { getCurrentHour } from "./main.js";
-
 //GET SUNRISE TIME
-async function getSunriseTime(forecastData) {
+function getSunriseTime(forecastData) {
   const time = forecastData.sunrise.slice(0, 2);
   //I CAN'T DO slice(6,8) BECAUSE STRING LENGTH MIGHT CHANGE
   const period = forecastData.sunrise.slice(-2);
@@ -19,7 +17,7 @@ async function getSunriseTime(forecastData) {
 }
 
 //GET SUNSET TIME
-async function getSunsetTime(forecastData) {
+function getSunsetTime(forecastData) {
   const time = forecastData.sunset.slice(0, 2);
   //I CAN'T DO slice(6,8) BECAUSE STRING LENGTH MIGHT CHANGE
   const period = forecastData.sunset.slice(-2);
@@ -37,14 +35,13 @@ async function getSunsetTime(forecastData) {
   return parseInt(time, 10);
 }
 
-async function isNight(forecastData, hour) {
+function isNight(forecastData, hour) {
   //if the current hour is
   const now = hour;
-  const sunrise = await getSunriseTime(forecastData);
-  const sunset = await getSunsetTime(forecastData);
+  const sunrise = getSunriseTime(forecastData);
+  const sunset = getSunsetTime(forecastData);
   const verdict = now < sunrise || now > sunset;
-  console.log(verdict, now, sunrise, sunset);
   return verdict;
 }
 
-export { isNight };
+export { isNight, getSunriseTime, getSunsetTime };

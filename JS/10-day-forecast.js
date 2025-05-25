@@ -1,27 +1,75 @@
 import { getDate } from "./main.js";
-import { isNight } from "./day-or-night.js";
-import { setWeatherIcon } from "./Slider-card.js";
+import {
+  getClearConditions,
+  getPartlyCloudyConditions,
+  getSunnyConditions,
+  getCloudyConditions,
+  getRainyConditions,
+  getSnowyConditions,
+} from "./get-weather-conditions.js";
 
 function createDayName(forecast, day, currentDayName) {
   const dayName = document.createElement("span");
   dayName.classList.add("forecast-day");
-  let dayText = document.createTextNode("");
   if (forecast.indexOf(day) !== 0) {
-    dayText.nodeValue = currentDayName;
+    dayName.textContent = currentDayName;
   } else {
-    dayText.nodeValue = "Today";
+    dayName.textContent = "Today";
   }
-  dayName.appendChild(dayText);
 
   return dayName;
 }
 
-function createWeatherIcon(forecastData, forecast, night, day) {
+function setWeatherIcon(conditions) {
+  const weatherIcon = document.createElement("img");
+  weatherIcon.classList.add("weather-icon");
+
+  let iconSet = false; // track if an icon was matched
+  const cond = conditions.trim().toLowerCase();
+
+  weatherIcon.src = ""; // set empty icon to begin with to allow update
+
+  if (getClearConditions().includes(cond)) {
+    weatherIcon.src = "../SVGs/clear-night.svg";
+    weatherIcon.style.width = "12px";
+    iconSet = true;
+  }
+  if (getPartlyCloudyConditions().includes(cond)) {
+    weatherIcon.src = "../SVGs/partly-sunny.svg";
+    weatherIcon.style.width = "22px";
+    iconSet = true;
+  }
+
+  if (getSunnyConditions().includes(cond)) {
+    weatherIcon.src = "../SVGs/sunny.svg";
+    weatherIcon.style.width = "16px";
+    iconSet = true;
+  }
+  if (getCloudyConditions().includes(cond)) {
+    weatherIcon.src = "../SVGs/cloudy.svg";
+    iconSet = true;
+  }
+  if (getRainyConditions().includes(cond)) {
+    weatherIcon.src = "../SVGs/rainy.svg";
+    iconSet = true;
+  }
+  if (getSnowyConditions().includes(cond)) {
+    weatherIcon.src = "../SVGs/snowy.svg";
+    iconSet = true;
+  }
+  if (!iconSet) {
+    console.warn("⚠️ No icon matched for condition:", cond);
+  }
+
+  return weatherIcon;
+}
+
+function createWeatherIcon(forecastData, forecast, day) {
   const conditions =
     forecastData.futureForecast[forecast.indexOf(day)].day.condition.text;
   const iconContainer = document.createElement("div");
   iconContainer.classList.add("forecast-icon-container");
-  const weatherIcon = setWeatherIcon(conditions, night);
+  const weatherIcon = setWeatherIcon(conditions);
   iconContainer.appendChild(weatherIcon);
   return iconContainer;
 }
@@ -55,7 +103,7 @@ function createMaximumTemp(forecastMaxTemp) {
   return [maxArrow, maxTemp];
 }
 
-async function setFutureForecast(forecastData) {
+function setFutureForecast(forecastData) {
   //STORE FORECAST ARRAY
   const forecast = forecastData.futureForecast;
   const forecastContainer = document.querySelector(".forecast-container");
@@ -73,13 +121,12 @@ async function setFutureForecast(forecastData) {
     horizontalContainer.classList.add("horizontal-container");
 
     //📆 DISPLAY DAY
-    const currentDayName = await getDate(forecastData, forecast.indexOf(day));
+    const currentDayName = getDate(forecastData, forecast.indexOf(day));
     const dayName = createDayName(forecast, day, currentDayName);
     horizontalContainer.appendChild(dayName);
 
     //🌥️ DISPLAY ICON
-    const night = await isNight(forecastData);
-    const weatherIcon = createWeatherIcon(forecastData, forecast, night, day);
+    const weatherIcon = createWeatherIcon(forecastData, forecast, day);
     horizontalContainer.appendChild(weatherIcon);
 
     //🟢 DISPLAY MINIMUM TEMPERATURE
