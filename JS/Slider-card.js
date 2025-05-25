@@ -23,9 +23,9 @@ function getSunriseAndSunsetFullTime(forecastData) {
 }
 
 // ✅ REFACTORED
-function setHour(forecastData, getNextHour, i) {
-  const sunriseHour = getSunriseTime(forecastData);
-  const sunsetHour = getSunsetTime(forecastData);
+function setHour(weatherContext, i) {
+  const { forecastData, sunriseHour, sunsetHour, getNextHour } = weatherContext;
+
   const [fullSunriseTime, fullSunsetTime] =
     getSunriseAndSunsetFullTime(forecastData);
 
@@ -43,61 +43,70 @@ function setHour(forecastData, getNextHour, i) {
   return time;
 }
 
-// ✅ REFACTORED
-function setWeatherIcon(
-  forecastData,
-  getNextHour,
-  weatherConditions,
-  nightStatus
-) {
-  const sunriseHour = getSunriseTime(forecastData);
-  const sunsetHour = getSunsetTime(forecastData);
+function setIconAttributes(weatherIcon, src, width = "18px") {
+  weatherIcon.src = src;
+  weatherIcon.style.width = width;
+}
 
-  const weatherIcon = document.createElement("img");
-  weatherIcon.classList.add("weather-icon");
+// ✅ REFACTORED
+function setWeatherIcon(weatherContext, weatherConditions, nightStatus) {
+  const { sunriseHour, sunsetHour, getNextHour } = weatherContext;
+
+  const icon = document.createElement("img");
+  icon.classList.add("weather-icon");
 
   const conditions = weatherConditions.trim().toLowerCase();
 
   // Set empty icon to begin with to allow update
-  weatherIcon.src = "";
+  icon.src = "";
 
   if (getNextHour === sunriseHour) {
-    weatherIcon.src = "../SVGs/sunrise.svg";
-    weatherIcon.style.width = "22px";
-  } else if (getNextHour === sunsetHour) {
-    weatherIcon.src = "../SVGs/sunset.svg";
-    weatherIcon.style.width = "22px";
-  } else if (getClearConditions().includes(conditions)) {
-    weatherIcon.src = "../SVGs/clear-night.svg";
-    weatherIcon.style.width = "12px";
-  } else if (getPartlyCloudyConditions().includes(conditions)) {
-    if (nightStatus) weatherIcon.src = "../SVGs/partly-clear-night.svg";
+    setIconAttributes(icon, "../SVGs/sunrise.svg", "22px");
+    return icon;
+  }
+  if (getNextHour === sunsetHour) {
+    setIconAttributes(icon, "../SVGs/sunset.svg", "22px");
+    return icon;
+  }
+  if (getClearConditions().includes(conditions)) {
+    setIconAttributes(icon, "../SVGs/clear-night.svg", "12px");
+    return icon;
+  }
+  if (getPartlyCloudyConditions().includes(conditions)) {
+    if (nightStatus) setIconAttributes(icon, "../SVGs/partly-clear-night.svg");
     else if (!nightStatus) {
-      weatherIcon.src = "../SVGs/partly-sunny.svg";
-      weatherIcon.style.width = "22px";
+      setIconAttributes(icon, "../SVGs/partly-sunny.svg", "22px");
     }
-  } else if (getSunnyConditions().includes(conditions)) {
-    weatherIcon.src = "../SVGs/sunny.svg";
-    weatherIcon.style.width = "16px";
-  } else if (getCloudyConditions().includes(conditions)) {
-    weatherIcon.src = "../SVGs/cloudy.svg";
-  } else if (getRainyConditions().includes(conditions)) {
-    weatherIcon.src = "../SVGs/rainy.svg";
-  } else if (getSnowyConditions().includes(conditions)) {
-    weatherIcon.src = "../SVGs/snowy.svg";
-  } else if (!weatherIcon.src) {
+    return icon;
+  }
+  if (getSunnyConditions().includes(conditions)) {
+    setIconAttributes(icon, "../SVGs/sunny.svg", "16px");
+    return icon;
+  }
+  if (getCloudyConditions().includes(conditions)) {
+    setIconAttributes(icon, "../SVGs/cloudy.svg");
+    return icon;
+  }
+  if (getRainyConditions().includes(conditions)) {
+    setIconAttributes(icon, "../SVGs/rainy.svg");
+    return icon;
+  }
+  if (getSnowyConditions().includes(conditions)) {
+    setIconAttributes(icon, "../SVGs/snowy.svg");
+    return icon;
+  }
+  if (!icon.src) {
     console.warn("No icon matched for:", conditions);
-    weatherIcon.src = "../SVGs/partly-sunny.svg";
+    setIconAttributes(icon, "../SVGs/partly-sunny.svg", "22px");
+    return icon;
   }
 
-  return weatherIcon;
+  return icon;
 }
 
 // ✅ REFACTORED
-function setTemperature(forecastData, getNextHour) {
-  const sunriseHour = getSunriseTime(forecastData);
-  const sunsetHour = getSunsetTime(forecastData);
-
+function setTemperature(weatherContext) {
+  const { forecastData, sunriseHour, sunsetHour, getNextHour } = weatherContext;
   const temperature = document.createElement("p");
   temperature.classList.add("slider-temperature");
 
@@ -118,6 +127,9 @@ function setSliderTrio(forecastData) {
   const currentHour = getCurrentHour(forecastData);
   const sliderContents = document.querySelector(".slider-contents");
 
+  const sunriseHour = getSunriseTime(forecastData);
+  const sunsetHour = getSunsetTime(forecastData);
+
   // Clear the existing content by setting innerHTML to an empty string
   sliderContents.innerHTML = "";
 
@@ -127,22 +139,21 @@ function setSliderTrio(forecastData) {
     sliderTrio.classList.add("slider-trio");
     // Return the remainder of the modulus operation to ensure that the hour stays within the range of 0-23
     const getNextHour = (currentHour + i) % 24;
-
+    //Arguments to pass to functions
+    const context = {
+      forecastData,
+      getNextHour,
+      sunriseHour,
+      sunsetHour,
+    };
     //⏰ GET TIME
-    const sliderTime = setHour(forecastData, getNextHour, i);
-
+    const sliderTime = setHour(context, i);
     //🌥️ DISPLAY ICON
     const night = isNight(forecastData, getNextHour);
     const conditions = forecastData.hourlyForecast[getNextHour].condition.text;
-    const weatherIcon = setWeatherIcon(
-      forecastData,
-      getNextHour,
-      conditions,
-      night
-    );
-
+    const weatherIcon = setWeatherIcon(context, conditions, night);
     //🌡️ DISPLAY TEMPERATURE
-    const sliderTemperature = setTemperature(forecastData, getNextHour);
+    const sliderTemperature = setTemperature(context);
 
     sliderTrio.append(sliderTime, weatherIcon, sliderTemperature);
     sliderContents.appendChild(sliderTrio);
