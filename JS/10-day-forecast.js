@@ -1,4 +1,3 @@
-import { getDate } from "./main.js";
 import {
   getClearConditions,
   getPartlyCloudyConditions,
@@ -7,6 +6,16 @@ import {
   getRainyConditions,
   getSnowyConditions,
 } from "./get-weather-conditions.js";
+
+// ✅ REFACTORED
+function getDate(forecastData, currentDay) {
+  // to be used in the loop
+  const day = forecastData.futureForecast[currentDay].date;
+  const date = new Date(day);
+  const name = date.toLocaleDateString("en-US", { weekday: "short" });
+
+  return name;
+}
 
 function createDayName(forecast, day, currentDayName) {
   const dayName = document.createElement("span");

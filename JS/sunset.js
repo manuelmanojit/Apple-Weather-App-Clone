@@ -5,7 +5,6 @@ const ball = document.querySelector(".sun-anim-ball");
 
 function hideBall(forecastData, time) {
   const sunset = getSunsetTime(forecastData);
-  console.log(time, sunset);
   ball.style.opacity = "0.75";
   if (time > sunset) return (ball.style.right = "calc(0% - 27.5px");
   ball.style.left = "calc(0% - 27.5px";
