@@ -11,15 +11,77 @@ import { moveSunBall } from "./sunset.js";
 import { setHumidity } from "./humidity.js";
 import { setVisibility } from "./visibility-km.js";
 
+// Give focus to a text field when the document has been loaded:
+// window.onload = function() {
+//   document.getElementById("myText").focus();
+// }
+
 const search = document.querySelector(".search");
-//THIS IS UPDATING ON GETWEATHER, NOT REQUESTWEATHER
+const container = document.querySelector(".search-container");
+const list = document.createElement("ul");
+list.classList.add("search-dropdown");
+list.style.display = "none";
+
 search.addEventListener("keydown", async (e) => {
   if (e.key === "Enter") {
+    list.style.display = "none";
     let newCity = search.value;
     const forecast = await getWeather(newCity);
     await setHomeUI(forecast);
   }
 });
+
+// search.addEventListener("keydown", async (e) => {
+//   if (e.key === "ArrowDown") {
+//   }
+// });
+
+async function getCity(typedValue) {
+  const API = "e6f33b99dee14f6b96c64046252405";
+  const BASE_URL = "http://api.weatherapi.com/v1/";
+
+  if (!typedValue) return;
+
+  const citySearch = await fetch(
+    `${BASE_URL}search.json?key=${API}&q=${typedValue}`
+  );
+  return await citySearch.json();
+}
+
+search.addEventListener("input", async (e) => {
+  let typedValue = e.target.value;
+
+  list.style.display = "block";
+  const citiesArray = await getCity(typedValue);
+
+  if (!citiesArray || typedValue.length === 0) list.style.display = "none";
+  // if (!typedValue) return;
+  createSuggestions(citiesArray);
+  if (!citiesArray) return (list.style.display = "none");
+});
+
+function createSuggestions(citiesArray) {
+  list.innerHTML = "";
+  // can also use: while (list.firstChild) list.removeChild(list.firstChild);
+  if (!citiesArray) return;
+  citiesArray.forEach((city) => {
+    const listItem = document.createElement("li");
+
+    listItem.textContent = `${city.name}, ${city.country}`;
+    listItem.classList.add("search-dropdown-item");
+
+    container.appendChild(list);
+
+    listItem.addEventListener("click", async () => {
+      list.style.display = "none";
+      const forecast = await getWeather(city.name);
+      await setHomeUI(forecast);
+      list.innerHTML = "";
+    });
+    list.appendChild(listItem);
+    console.log(list.childNodes[0], list.childNodes.length - 1);
+  });
+}
 
 function createForecastData(weather, astronomy) {
   const now = weather.current;

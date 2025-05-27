@@ -66,6 +66,50 @@ nav {
   vertical-align: middle; /* Align with text */
 }
 
+/* Dropdown container */
+.search-dropdown {
+  position: absolute;
+  top: 100%; /* right below the input */
+  left: 0;
+  width: 100%;
+  height: auto;
+  overflow-y: auto;
+  border-radius: 7px;
+  background-color: rgba(0, 0, 0, 0.394);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px); /* Safari support */
+  margin-top: 8px;
+  z-index: 1000;
+  list-style: none;
+  font-weight: 350;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.8125rem;
+  user-select: none;
+}
+
+/* Show dropdown when active */
+.search-dropdown.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* Individual list items */
+.search-dropdown li {
+  padding: 15px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Hover and focus styles for items */
+.search-dropdown li:hover,
+.search-dropdown li:focus {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
 /* CURRENT WEATHER HEADER */
 
 #current-weather-container {
