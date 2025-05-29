@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Apple Weather App</title>
-    <!-- Link to external stylesheet -->
+
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="../CSS/styles.css" />
     <link
       rel="stylesheet"
@@ -12,46 +13,46 @@
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin=""
     />
-    <!-- Example: Google Fonts icon import (customize as needed) -->
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
     />
-    <!-- Add Inter Font -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
       rel="stylesheet"
     />
 
-    <!-- Defer JavaScript loading -->
-    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <!-- Scripts -->
     <script
       src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
       crossorigin=""
       defer
     ></script>
+    <script type="module" src="../JS/weatherAPI-config.js"></script>
     <script type="module" src="../JS/main.js" defer></script>
-    <script type="module" src="../JS/Slider-card.js" defer></script>
-    <script type="module" src="../JS/day-or-night.js" defer></script>
-    <script type="module" src="../JS/air-quality.js" defer></script>
-    <script type="module" src="../JS/uv-index.js" defer></script>
   </head>
 
   <body>
     <div id="master-container">
-      <!-- === Main Content Area === -->
       <main id="main-container">
-        <!-- === Section 1: Current Weather Display (Example Block) === -->
+        <!-- Section 1: Current Weather Display -->
         <section>
           <header>
             <div id="header-container">
-              <div class="search-container">
-                <span class="material-symbols-outlined search-icon"
-                  >search</span
-                >
-                <input type="text" class="search" placeholder="Search" />
+              <div class="add-and-search">
+                <div class="add-btn">
+                  <span class="material-symbols-outlined"> add_circle </span>
+                  <p>Add</p>
+                </div>
+                <div class="search-container">
+                  <span class="material-symbols-outlined search-icon"
+                    >search</span
+                  >
+                  <input type="text" class="search" placeholder="Search" />
+                </div>
               </div>
+
               <div id="current-weather-container">
                 <div class="location-and-home">
                   <i
@@ -75,47 +76,49 @@
         <!-- Section 2: Forecast Navigation -->
         <section id="forecast navigation">
           <div id="inner-container">
-            <!-- === Arrow Left === -->
             <div id="left-arrow"></div>
 
-            <!-- WEATHER GRID -->
+            <!-- 24-Hour Forecast -->
             <div class="slider cards">
               <div class="slider-header">
-                <span class="material-symbols-outlined slider-icon">
-                  update
-                </span>
+                <span class="material-symbols-outlined slider-icon"
+                  >update</span
+                >
                 <p>the next 24 hours</p>
               </div>
               <hr />
               <div class="slider-contents"></div>
             </div>
-            <!-- FORECAST 10-DAY -->
+
+            <!-- 10-Day Forecast -->
             <div class="forecast cards">
               <div class="forecast-header">
-                <span class="material-symbols-outlined calendar-icon">
-                  calendar_month
-                </span>
+                <span class="material-symbols-outlined calendar-icon"
+                  >calendar_month</span
+                >
                 <p>future forecast</p>
               </div>
               <hr />
               <div class="forecast-container"></div>
             </div>
-            <!-- PRECIPITATION RAIN -->
+
+            <!-- Rain Map -->
             <div class="rainmap cards">
               <div class="rainmap-header">
-                <span class="material-symbols-outlined water-drop">
-                  water_drop
-                </span>
+                <span class="material-symbols-outlined water-drop"
+                  >water_drop</span
+                >
                 <p>Precipitation</p>
               </div>
               <div class="rainmap-container">
                 <div id="rain-map"></div>
               </div>
             </div>
-            <!-- WIND -->
+
+            <!-- Wind -->
             <div class="wind cards">
               <div class="wind-header">
-                <span class="material-symbols-outlined wind-icon"> air </span>
+                <span class="material-symbols-outlined wind-icon">air</span>
                 <p>Wind</p>
               </div>
               <div class="wind-content">
@@ -135,10 +138,11 @@
                 </div>
               </div>
             </div>
-            <!-- AIR-QUALITY -->
+
+            <!-- Air Quality -->
             <div class="air cards">
               <div class="air-header">
-                <span class="material-symbols-outlined air-icon"> grain </span>
+                <span class="material-symbols-outlined air-icon">grain</span>
                 <p>air pollution</p>
               </div>
               <div class="air-content">
@@ -148,17 +152,16 @@
                     <div class="air-anim-ball"></div>
                   </div>
                 </div>
-                <div>
-                  <p id="air-caption"></p>
-                </div>
+                <p id="air-caption"></p>
               </div>
             </div>
-            <!-- UV INDEX -->
+
+            <!-- UV Index -->
             <div class="uvindex cards">
               <div class="uvindex-header">
-                <span class="material-symbols-outlined uvindex-icon">
-                  sunny
-                </span>
+                <span class="material-symbols-outlined uvindex-icon"
+                  >sunny</span
+                >
                 <p>uv index</p>
               </div>
               <div class="uvindex-content">
@@ -171,17 +174,16 @@
                     <div class="uvindex-anim-ball"></div>
                   </div>
                 </div>
-                <div>
-                  <p id="uvindex-caption"></p>
-                </div>
+                <p id="uvindex-caption"></p>
               </div>
             </div>
-            <!-- SUNSET -->
+
+            <!-- Sunset -->
             <div class="sunset cards">
               <div class="sunset-header">
-                <span class="material-symbols-outlined sunset-icon">
-                  wb_twilight
-                </span>
+                <span class="material-symbols-outlined sunset-icon"
+                  >wb_twilight</span
+                >
                 <p>Sunset</p>
               </div>
               <div class="sunset-content">
@@ -190,32 +192,28 @@
                   <div class="sun-anim-stripe">
                     <div class="sun-anim-ball"></div>
                   </div>
-
                   <div class="sun-anim-hide-left"></div>
                   <div class="sun-anim-hide-right"></div>
-                  <div class="sunset-animation-stop-left">
-                    <span>|</span>
-                  </div>
-                  <div class="sunset-animation-stop-right">
-                    <span>|</span>
-                  </div>
+                  <div class="sunset-animation-stop-left"><span>|</span></div>
+                  <div class="sunset-animation-stop-right"><span>|</span></div>
                 </div>
                 <p id="sunset-caption"></p>
               </div>
             </div>
-            <!-- FEELS LIKE  -->
+
+            <!-- Feels Like -->
             <div class="feelslike cards">
               <div class="feelslike-header">
-                <span class="material-symbols-outlined feelslike-icon">
-                  cool_to_dry
-                </span>
+                <span class="material-symbols-outlined feelslike-icon"
+                  >cool_to_dry</span
+                >
                 <p>Feels like</p>
               </div>
               <div class="feelslike-content">
                 <div class="feelslike-new-number-container">
                   <p class="feelslike-new-number"></p>
                   <div class="feelslike-difference">
-                    <span class="material-symbols-outlined"> south </span>
+                    <span class="material-symbols-outlined">south</span>
                     <p>4°</p>
                   </div>
                 </div>
@@ -223,12 +221,13 @@
                 <p class="feelslike-caption"></p>
               </div>
             </div>
-            <!-- HUMIDITY -->
+
+            <!-- Humidity -->
             <div class="humidity cards">
               <div class="humidity-header">
-                <span class="material-symbols-outlined humidity-icon">
-                  cool_to_dry
-                </span>
+                <span class="material-symbols-outlined humidity-icon"
+                  >cool_to_dry</span
+                >
                 <p>Humidity</p>
               </div>
               <div class="humidity-content">
@@ -236,11 +235,13 @@
                 <p id="humidity-caption"></p>
               </div>
             </div>
+
+            <!-- Visibility -->
             <div class="visibility cards">
               <div class="visibility-header">
-                <span class="material-symbols-outlined visibility-icon">
-                  visibility
-                </span>
+                <span class="material-symbols-outlined visibility-icon"
+                  >visibility</span
+                >
                 <p>Visibility</p>
               </div>
               <div class="visibility-content">
@@ -248,7 +249,7 @@
                 <p id="visibility-caption"></p>
               </div>
             </div>
-            <!-- === Arrow Right === -->
+
             <div id="right-arrow"></div>
           </div>
         </section>

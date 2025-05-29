@@ -37,20 +37,44 @@ nav {
   flex-grow: 1;
 }
 
+.add-and-search {
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  right: 15px;
+  top: 12px;
+  height: 29px;
+  width: 300px;
+}
+
+.add-btn {
+  display: flex;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 7px;
+  color: rgba(255, 255, 255, 0.8);
+  padding-left: 8px;
+  padding-right: 10px;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.add-btn p {
+  font-size: 0.8125rem;
+}
+
+.add-btn span {
+  font-size: 1.25rem;
+}
 /* SEARCH BOX */
 
 .search-container {
   display: flex;
   align-items: center;
-  position: fixed;
-  right: 15px;
-  top: 12px;
-  height: 29px;
-  width: 200px;
   border-radius: 7px;
   background-color: rgba(0, 0, 0, 0.2); /* use rgba instead of opacity */
   backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px); /* Safari support */
+  -webkit-backdrop-filter: blur(15px);
 }
 
 .search {
@@ -87,20 +111,12 @@ nav {
   user-select: none;
 }
 
-/* Show dropdown when active */
-.search-dropdown.active {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
 /* Individual list items */
 .search-dropdown li {
-  padding: 15px 20px;
+  padding: 12px 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
 }
 
 /* Hover and focus styles for items */

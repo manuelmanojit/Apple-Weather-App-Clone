@@ -1,4 +1,4 @@
-import { getCurrentHour } from "./main.js";
+import { getCurrentHour } from "./utility-functions.js";
 import { isNight } from "./day-or-night.js";
 
 function getSunProtectionRequirement(forecastData) {

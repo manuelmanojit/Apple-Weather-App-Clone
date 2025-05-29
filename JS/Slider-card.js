@@ -1,4 +1,4 @@
-import { getCurrentHour, formatTime } from "./main.js";
+import { getCurrentHour, formatTime } from "./utility-functions.js";
 import { isNight, getSunriseTime, getSunsetTime } from "./day-or-night.js";
 import {
   getClearConditions,

@@ -7,7 +7,7 @@ import {
   getSnowyConditions,
 } from "./get-weather-conditions.js";
 import { isNight } from "./day-or-night.js";
-import { getCurrentHour } from "./main.js";
+import { getCurrentHour } from "./utility-functions.js";
 
 const container = document.querySelector("#main-container");
 const cards = document.querySelectorAll(".cards");
