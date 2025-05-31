@@ -11,10 +11,22 @@ import { setUvIndex } from "./uv-index.js";
 import { moveSunBall } from "./sunset.js";
 import { setHumidity } from "./humidity.js";
 import { setVisibility } from "./visibility-km.js";
+import { addCity, getSavedCities } from "./add-city.js";
 
 const search = document.querySelector(".search");
 // DOMContentLoaded loads faster than "load" event
-window.addEventListener("DOMContentLoaded", () => search.focus());
+window.addEventListener("DOMContentLoaded", () => {
+  // Initial API call triggered with city = "copenhagen"
+  firstRun();
+  // This function reads the localStorage and creates a card for each city added with "Add"
+  getSavedCities();
+  search.focus();
+});
+
+async function firstRun() {
+  const forecastData = await getWeather();
+  setHomeUI(forecastData);
+}
 
 function createForecastData(weather, astronomy) {
   const now = weather.current;
@@ -44,6 +56,7 @@ function createForecastData(weather, astronomy) {
     futureForecast: weather.forecast.forecastday,
     // --- LOCATION ---
     city: location.name,
+    region: location.region,
     cityTimezone: location.tz_id,
     longitude: location.lon,
     latitude: location.lat,
@@ -90,11 +103,7 @@ async function setHomeUI(forecastData) {
   setBackground(forecastData);
   await getRainMap(forecastData);
   await import("./search-field.js");
+  addCity(forecastData);
 }
-
-// Initial API call triggered with city = "copenhagen"
-getWeather().then((forecastData) => {
-  setHomeUI(forecastData);
-});
 
 export { getWeather, setHomeUI };

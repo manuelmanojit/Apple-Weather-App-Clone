@@ -30,7 +30,7 @@ async function selectCity(city) {
   list.innerHTML = "";
   search.value = "";
   const forecast = await getWeather(city);
-  await setHomeUI(forecast);
+  setHomeUI(forecast);
 }
 
 function createSuggestions(citiesArray) {

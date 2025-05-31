@@ -9,7 +9,7 @@ import {
 import { isNight } from "./day-or-night.js";
 import { getCurrentHour } from "./utility-functions.js";
 
-const navBar = document.querySelector(".nav-container");
+const navBar = document.querySelector(".navbar");
 const container = document.querySelector("#main-container");
 const cards = document.querySelectorAll(".cards");
 const headerConditions = document.querySelector(".condition");

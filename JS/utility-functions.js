@@ -21,6 +21,23 @@ export function getCurrentHour(forecastData) {
   const currentHour = parseInt(
     new Intl.DateTimeFormat("default", options).format(currentDay)
   );
+  return currentHour;
+}
+
+export function getCurrentHourAndMinutes(forecastData) {
+  const timezone = forecastData.cityTimezone;
+  const currentDay = new Date();
+
+  const options = {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: timezone,
+    hour12: false,
+  };
+  // I need parseInt because Intl.DateTImeFormat returns a string
+  const currentHour = new Intl.DateTimeFormat("default", options).format(
+    currentDay
+  );
 
   return currentHour;
 }
