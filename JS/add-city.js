@@ -1,24 +1,37 @@
 import { getCurrentHourAndMinutes } from "./utility-functions.js";
-import { getWeather, setHomeUI } from "./main.js";
+import { getWeather, setHomeUI, getFirstSavedCity } from "./main.js";
 
 const navBar = document.querySelector(".navbar");
-const btn = document.querySelector(".add-btn");
-const sidebarIcon = document.querySelector(".side-bar-icon");
-sidebarIcon.addEventListener("click", () => {
-  const currentDisplay = getComputedStyle(navBar).display;
-  navBar.style.display = currentDisplay === "block" ? "none" : "block";
-});
+const forecastContainer = document.querySelector("#main-container");
 
-function setCity(forecastData) {
+const addButton = document.querySelector(".add-btn");
+addButton.style.display = "flex";
+addButton.style.opacity = "1";
+const addIcon = document.querySelector(".add-btn span");
+const addText = document.querySelector(".add-btn p");
+
+(function hideSidebar() {
+  // Hide/Show thorugh icon click
+  const sidebarIcon = document.querySelector(".side-bar-icon");
+
+  sidebarIcon.addEventListener("click", () => {
+    navBar.style.left = navBar.style.left === "-220px" ? "0" : "-220px";
+    forecastContainer.style.transform =
+      navBar.style.left === "-220px" ? "translate(-4.6vw)" : "translate(0%)";
+  });
+})();
+
+function setCity(data) {
   //f = forecast
-  const f = forecastData;
-  console.log(getCurrentHourAndMinutes(forecastData));
+  const f = data;
+  const timezone = data.timezone;
 
+  // Cont = container
   const navCont = document.querySelector(".nav-container");
   // Wraps both card and hr
   const wrapper = document.createElement("div");
   wrapper.classList.add("nav-element-wrapper");
-  // Cont = container
+
   const cardCont = document.createElement("div");
   cardCont.classList.add("nav-element-container");
 
@@ -34,7 +47,7 @@ function setCity(forecastData) {
   navCity.textContent = f.city;
   const time = document.createElement("p");
   time.classList.add("nav-time");
-  time.textContent = getCurrentHourAndMinutes(forecastData);
+  time.textContent = getCurrentHourAndMinutes(timezone);
   topLeft.append(navCity, time);
 
   const temperature = document.createElement("p");
@@ -75,10 +88,43 @@ function setCity(forecastData) {
   wrapper.append(cardCont, hr);
   navCont.appendChild(wrapper);
 
-  cardCont.addEventListener("click", async () => {
-    const forecast = await getWeather(f.city);
-    setHomeUI(forecast);
+  // I get all the saved cities cards
+  Array.from(navCont.children).forEach((savedCity) => {
+    // Every saved city gets an event listener
+    savedCity.addEventListener("click", (e) => {
+      if (e.currentTarget === savedCity) {
+        // Whenever I click on one saved city, all the other ones leave the "active" styling
+        Array.from(navCont.children).forEach((city) =>
+          city.firstChild.classList.remove("active")
+        );
+        // Right after that, I add the "active" styling to the saved city I just pressed
+        savedCity.firstChild.classList.add("active");
+      }
+    });
   });
+
+  cardCont.addEventListener("click", async (e) => {
+    if (!e.target.classList.contains("delete-button")) {
+      const forecast = await getWeather(f.city);
+
+      let savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
+
+      const cityExists = savedCities.some(
+        (cityData) =>
+          cityData.city === forecast.city && cityData.region === forecast.region
+      );
+      localStorage.setItem(
+        "lastSelectedCity",
+        `${forecast.latitude},${forecast.longitude}`
+      );
+      if (cityExists) {
+        addButton.style.display = "none";
+      }
+      // This saves it as the last selected city to keep when refreshing the page
+      setHomeUI(forecast);
+    }
+  });
+
   const deleteCont = document.createElement("div");
   cardCont.addEventListener("mouseover", () => {
     if (!document.querySelector(".delete-button")) {
@@ -89,8 +135,31 @@ function setCity(forecastData) {
       deleteCont.appendChild(deleteBtn);
       cardCont.prepend(deleteCont);
 
-      deleteBtn.addEventListener("click", (e) => {
+      deleteBtn.addEventListener("click", async () => {
         wrapper.remove();
+        //I need to get all the array items back but except the one i want to delete
+        //I need to first get the stored object, then run filter on it and then overwrite it
+        const savedCities =
+          JSON.parse(localStorage.getItem("savedCities")) || [];
+        const updatedCities = savedCities.filter(
+          (city) => city.city !== f.city && city.region !== f.region
+        );
+        localStorage.setItem("savedCities", JSON.stringify(updatedCities));
+        const city = getFirstSavedCity();
+        const forecast = await getWeather(city);
+        setHomeUI(forecast);
+        // Hide/Show depending on whether there are saved cities
+        if (savedCities.length === 1) {
+          forecastContainer.style.transform = "translate(-4.6vw)";
+          navBar.style.left = "-220px";
+          addButton.style.display = "flex";
+          setTimeout(() => {
+            const noCitiesMsg = document.createElement("p");
+            noCitiesMsg.classList.add("no-saved-cities");
+            noCitiesMsg.textContent = "No saved cities yet";
+            navCont.appendChild(noCitiesMsg);
+          }, 1000);
+        }
       });
     }
   });
@@ -110,10 +179,13 @@ let handleClick = null;
 function addCity(forecastData) {
   // If the event listener has already been used, remove it
   if (handleClick) {
-    btn.removeEventListener("click", handleClick);
+    addButton.removeEventListener("click", handleClick);
   }
   // Once the event listener is used, handleClick goes from "null" (false) to true
   handleClick = () => {
+    const existingNoCitiesMsg = document.querySelector(".no-saved-cities");
+    if (existingNoCitiesMsg) existingNoCitiesMsg.remove();
+
     const data = {
       city: forecastData.city,
       region: forecastData.region,
@@ -121,7 +193,12 @@ function addCity(forecastData) {
       conditions: forecastData.conditions,
       tempMax: forecastData.tempMax,
       tempMin: forecastData.tempMin,
+      timezone: forecastData.cityTimezone,
+      lat: forecastData.latitude,
+      lon: forecastData.longitude,
     };
+
+    getFirstSavedCity();
     // Retrieve the saved cities array from localStorage, or use an empty array if nothing is saved yet
     // If we have one city object saved, we read it from the localStorage
     let savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
@@ -137,23 +214,39 @@ function addCity(forecastData) {
       // Save the updated savedCities array back to localStorage under the same key,
       // thefore overwriting the old data with the new array that includes all cities
       localStorage.setItem("savedCities", JSON.stringify(savedCities));
-      setCity(forecastData);
+      setCity(data);
+      setTimeout(() => (addButton.style.opacity = "0"), 1000);
+      addIcon.textContent = "check_circle";
+      addText.textContent = "Added";
+      navBar.style.left = "0";
     }
   };
 
-  btn.addEventListener("click", handleClick);
+  addButton.addEventListener("click", handleClick);
 }
 
-function getSavedCities() {
+function showSavedCities() {
   // Get all the cities currently saved in the localStorage (array of objects)
   const savedCities = JSON.parse(localStorage.getItem("savedCities"));
+
+  const navCont = document.querySelector(".nav-container");
+  // Remove existing "no cities" message if it's already there
+
+  if (savedCities.length === 0) {
+    const noCitiesMsg = document.createElement("p");
+    noCitiesMsg.classList.add("no-saved-cities");
+    noCitiesMsg.textContent = "No saved cities yet.";
+    navCont.appendChild(noCitiesMsg);
+    return; // No cities to render, exit early
+  }
+
   // For every object in the array (cityData) run setCity with "cityData" instead of the current forecastData,
   // therefore creating a new card for each city and its data stored in the localStorage
   // This way, each card can still use the data used at the moment of pressing "Add"
   savedCities.forEach((cityData) => setCity(cityData));
 }
 
-export { addCity, getSavedCities };
+export { addCity, showSavedCities };
 
 // ALTERNATIVE
 // let savedCities;

@@ -3,6 +3,9 @@ import { API, BASE_URL } from "./weatherAPI-config.js";
 
 const container = document.querySelector(".search-container");
 const search = document.querySelector(".search");
+const addButton = document.querySelector(".add-btn");
+const addIcon = document.querySelector(".add-btn span");
+const addText = document.querySelector(".add-btn p");
 
 const list = document.createElement("ul");
 list.classList.add("search-dropdown");
@@ -30,6 +33,23 @@ async function selectCity(city) {
   list.innerHTML = "";
   search.value = "";
   const forecast = await getWeather(city);
+
+  let savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
+
+  const cityExists = savedCities.some(
+    (cityData) =>
+      cityData.city === forecast.city && cityData.region === forecast.region
+  );
+  console.log(cityExists);
+  if (cityExists) {
+    addButton.style.display = "none";
+  } else {
+    addIcon.textContent = "add_circle";
+    addText.textContent = "Add";
+    addButton.style.display = "flex";
+    addButton.style.opacity = "1";
+  }
+
   setHomeUI(forecast);
 }
 

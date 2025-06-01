@@ -24,8 +24,7 @@ export function getCurrentHour(forecastData) {
   return currentHour;
 }
 
-export function getCurrentHourAndMinutes(forecastData) {
-  const timezone = forecastData.cityTimezone;
+export function getCurrentHourAndMinutes(timezone) {
   const currentDay = new Date();
 
   const options = {

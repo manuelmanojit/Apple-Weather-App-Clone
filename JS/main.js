@@ -11,21 +11,49 @@ import { setUvIndex } from "./uv-index.js";
 import { moveSunBall } from "./sunset.js";
 import { setHumidity } from "./humidity.js";
 import { setVisibility } from "./visibility-km.js";
-import { addCity, getSavedCities } from "./add-city.js";
+import { addCity, showSavedCities } from "./add-city.js";
 
 const search = document.querySelector(".search");
+const navBar = document.querySelector(".navbar");
+// navBar.style.display = "block";
 // DOMContentLoaded loads faster than "load" event
 window.addEventListener("DOMContentLoaded", () => {
+  // navBar.style.display = "block";
   // Initial API call triggered with city = "copenhagen"
   firstRun();
+
   // This function reads the localStorage and creates a card for each city added with "Add"
-  getSavedCities();
+  showSavedCities();
   search.focus();
 });
 
 async function firstRun() {
-  const forecastData = await getWeather();
+  const city = getFirstSavedCity();
+  const forecastData = await getWeather(city);
+  // navBar.style.display = "none";
+  const addButton = document.querySelector(".add-btn");
+  addButton.style.display = "flex";
+  let savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
+  const cityExists = savedCities.some(
+    (cityData) =>
+      cityData.city === forecastData.city &&
+      cityData.region === forecastData.region
+  );
+  if (cityExists) {
+    addButton.style.display = "none";
+  }
+
   setHomeUI(forecastData);
+}
+
+function getFirstSavedCity() {
+  const savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
+  if (savedCities.length === 0) return undefined;
+  else {
+    const city = `${savedCities[0].lat},${savedCities[0].lon}`;
+
+    return city;
+  }
 }
 
 function createForecastData(weather, astronomy) {
@@ -58,8 +86,9 @@ function createForecastData(weather, astronomy) {
     city: location.name,
     region: location.region,
     cityTimezone: location.tz_id,
-    longitude: location.lon,
     latitude: location.lat,
+    longitude: location.lon,
+
     // --- SUN ---
     sunrise: sun.sunrise,
     sunset: sun.sunset,
@@ -84,7 +113,7 @@ async function getWeather(city = "copenhagen") {
 
   const forecast = createForecastData(weather, astronomy);
 
-  console.log(forecast, weather);
+  // console.log(forecast, weather);
   return forecast;
 }
 
@@ -106,4 +135,4 @@ async function setHomeUI(forecastData) {
   addCity(forecastData);
 }
 
-export { getWeather, setHomeUI };
+export { getWeather, setHomeUI, getFirstSavedCity };

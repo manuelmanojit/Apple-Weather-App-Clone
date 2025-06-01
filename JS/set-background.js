@@ -10,7 +10,7 @@ import { isNight } from "./day-or-night.js";
 import { getCurrentHour } from "./utility-functions.js";
 
 const navBar = document.querySelector(".navbar");
-const container = document.querySelector("#main-container");
+const container = document.querySelector("#master-container");
 const cards = document.querySelectorAll(".cards");
 const headerConditions = document.querySelector(".condition");
 
@@ -18,7 +18,6 @@ function setBackground(forecastData) {
   const cond = forecastData.conditions.toLowerCase();
   const time = getCurrentHour(forecastData);
   const night = isNight(forecastData, time);
-  console.log(night === true);
 
   // Reset styles before setting new ones
   navBar.style.backgroundColor = "";
