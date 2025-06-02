@@ -15,6 +15,8 @@ import { addCity, showSavedCities } from "./add-city.js";
 
 const search = document.querySelector(".search");
 const navBar = document.querySelector(".navbar");
+const forecastContainer = document.querySelector("#main-container");
+
 // navBar.style.display = "block";
 // DOMContentLoaded loads faster than "load" event
 window.addEventListener("DOMContentLoaded", () => {
@@ -33,6 +35,7 @@ async function firstRun() {
   // navBar.style.display = "none";
   const addButton = document.querySelector(".add-btn");
   addButton.style.display = "flex";
+
   let savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
   const cityExists = savedCities.some(
     (cityData) =>
@@ -48,8 +51,13 @@ async function firstRun() {
 
 function getFirstSavedCity() {
   const savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
-  if (savedCities.length === 0) return undefined;
-  else {
+  if (savedCities.length === 0) {
+    forecastContainer.style.left = "-97px";
+    navBar.style.left = "-220px";
+    return undefined;
+  } else {
+    navBar.style.left = "0px";
+    forecastContainer.style.left = "0px";
     const city = `${savedCities[0].lat},${savedCities[0].lon}`;
 
     return city;

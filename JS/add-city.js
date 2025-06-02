@@ -1,40 +1,72 @@
 import { getCurrentHourAndMinutes } from "./utility-functions.js";
 import { getWeather, setHomeUI, getFirstSavedCity } from "./main.js";
 
+// 🌐 DOM ELEMENTS
 const navBar = document.querySelector(".navbar");
 const forecastContainer = document.querySelector("#main-container");
-
 const addButton = document.querySelector(".add-btn");
-addButton.style.display = "flex";
-addButton.style.opacity = "1";
 const addIcon = document.querySelector(".add-btn span");
 const addText = document.querySelector(".add-btn p");
 
-(function hideSidebar() {
-  // Hide/Show thorugh icon click
+addButton.style.display = "flex";
+addButton.style.opacity = "1";
+//---------------------------------------------------------------------
+// 📦 SIDEBAR TOGGLE HANDLER
+//---------------------------------------------------------------------
+(function useSidebarIcon() {
   const sidebarIcon = document.querySelector(".side-bar-icon");
 
   sidebarIcon.addEventListener("click", () => {
-    navBar.style.left = navBar.style.left === "-220px" ? "0" : "-220px";
-    forecastContainer.style.transform =
-      navBar.style.left === "-220px" ? "translate(-4.6vw)" : "translate(0%)";
+    if (
+      navBar.style.left === "-220px" &&
+      forecastContainer.style.left === "-97px"
+    ) {
+      navBar.style.left = "0px";
+      forecastContainer.style.left = "0px";
+    } else if (
+      navBar.style.left === "0px" &&
+      forecastContainer.style.left === "0px"
+    ) {
+      navBar.style.left = "-220px";
+      forecastContainer.style.left = "-97px";
+    }
   });
 })();
 
-function setCity(data) {
-  //f = forecast
-  const f = data;
-  const timezone = data.timezone;
+//---------------------------------------------------------------------
+// 📝 CREATE NO SAVED CITIES YET MESSAGE
+//---------------------------------------------------------------------
+function createNoSavedCitiesMsg() {
+  const navContainer = document.querySelector(".nav-container");
+  const noCitiesMsg = document.createElement("p");
+  noCitiesMsg.classList.add("no-saved-cities");
+  noCitiesMsg.textContent = "No saved cities yet";
+  navContainer.appendChild(noCitiesMsg);
+}
 
-  // Cont = container
-  const navCont = document.querySelector(".nav-container");
-  // Wraps both card and hr
+function createElement(elementType, className, content) {
+  const element = document.createElement(`${elementType}`);
+  element.classList.add(`${className}`);
+  element.textContent = `${content}`;
+  return element;
+}
+
+//---------------------------------------------------------------------
+// 🌆 CREATE CITY CARD
+//---------------------------------------------------------------------
+function setCity(data) {
+  const forecast = data;
+  const timezone = data.timezone;
+  const navContainer = document.querySelector(".nav-container");
+
+  // 🧱 CARD STRUCTURE
   const wrapper = document.createElement("div");
   wrapper.classList.add("nav-element-wrapper");
 
   const cardCont = document.createElement("div");
   cardCont.classList.add("nav-element-container");
 
+  // 🔝 TOP PART OF CARD
   const topInner = document.createElement("div");
   topInner.classList.add("top-inner-nav");
 
@@ -42,25 +74,29 @@ function setCity(data) {
   topLeft.classList.add("top-left-inner-nav");
   topInner.appendChild(topLeft);
 
-  const navCity = document.createElement("p");
-  navCity.classList.add("nav-city");
-  navCity.textContent = f.city;
-  const time = document.createElement("p");
-  time.classList.add("nav-time");
-  time.textContent = getCurrentHourAndMinutes(timezone);
-  topLeft.append(navCity, time);
+  const cityName = createElement("p", "nav-city", `${forecast.city}`);
 
-  const temperature = document.createElement("p");
-  temperature.classList.add("nav-temperature");
+  const time = createElement(
+    "p",
+    "nav-time",
+    getCurrentHourAndMinutes(timezone)
+  );
+  topLeft.append(cityName, time);
+
+  const temperature = createElement(
+    "p",
+    "nav-temperature",
+    `${forecast.temperature}°`
+  );
   topInner.appendChild(temperature);
-  temperature.textContent = `${f.temperature}°`;
 
+  // 🔽 BOTTOM PART OF CARD
   const bottomInner = document.createElement("div");
   bottomInner.classList.add("bottom-inner-nav");
 
   const condition = document.createElement("span");
   condition.classList.add("nav-condition");
-  condition.textContent = f.conditions;
+  condition.textContent = forecast.conditions;
 
   const maxmin = document.createElement("div");
   maxmin.classList.add("nav-max-min");
@@ -70,64 +106,65 @@ function setCity(data) {
 
   const maxValue = document.createElement("span");
   maxValue.classList.add("nav-max-temp");
-  maxValue.textContent = `${f.tempMax}°`;
+  maxValue.textContent = `${forecast.tempMax}°`;
 
   const minText = document.createElement("span");
   minText.textContent = "L:";
 
   const minValue = document.createElement("span");
   minValue.classList.add("nav-min-temp");
-  minValue.textContent = `${f.tempMin}°`;
+  minValue.textContent = `${forecast.tempMin}°`;
+
+  maxmin.append(maxText, maxValue, minText, minValue);
+  bottomInner.append(condition, maxmin);
 
   const hr = document.createElement("hr");
   hr.classList.add("nav-hr");
 
-  maxmin.append(maxText, maxValue, minText, minValue);
-  bottomInner.append(condition, maxmin);
   cardCont.append(topInner, bottomInner);
   wrapper.append(cardCont, hr);
-  navCont.appendChild(wrapper);
+  navContainer.appendChild(wrapper);
 
-  // I get all the saved cities cards
-  Array.from(navCont.children).forEach((savedCity) => {
-    // Every saved city gets an event listener
+  // 🖱️ SELECT ACTIVE CITY
+  Array.from(navContainer.children).forEach((savedCity) => {
     savedCity.addEventListener("click", (e) => {
       if (e.currentTarget === savedCity) {
-        // Whenever I click on one saved city, all the other ones leave the "active" styling
-        Array.from(navCont.children).forEach((city) =>
+        Array.from(navContainer.children).forEach((city) =>
           city.firstChild.classList.remove("active")
         );
-        // Right after that, I add the "active" styling to the saved city I just pressed
         savedCity.firstChild.classList.add("active");
       }
     });
   });
 
+  // 🔁 LOAD CITY ON CLICK
   cardCont.addEventListener("click", async (e) => {
-    if (!e.target.classList.contains("delete-button")) {
-      const forecast = await getWeather(f.city);
+    //I don't want that the delete button triggers this logic
+    if (e.target.classList.contains("delete-button")) return;
+    //Forecast comes from the same first call that created the saved city card
+    const thisCardForecast = await getWeather(forecast.city);
 
-      let savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
-
-      const cityExists = savedCities.some(
-        (cityData) =>
-          cityData.city === forecast.city && cityData.region === forecast.region
-      );
-      localStorage.setItem(
-        "lastSelectedCity",
-        `${forecast.latitude},${forecast.longitude}`
-      );
-      if (cityExists) {
-        addButton.style.display = "none";
-      }
-      // This saves it as the last selected city to keep when refreshing the page
-      setHomeUI(forecast);
-    }
+    let savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
+    const cityExists = savedCities.some(
+      (cityData) =>
+        cityData.city === thisCardForecast.city &&
+        cityData.region === thisCardForecast.region
+    );
+    // 💾 Save this city as the last selected one so it loads by default on page refresh or app startup
+    localStorage.setItem(
+      "lastSelectedCity",
+      `${thisCardForecast.latitude},${thisCardForecast.longitude}`
+    );
+    if (cityExists) addButton.style.display = "none";
+    // This sets the Home UI with this last clicked city
+    setHomeUI(thisCardForecast);
   });
 
+  // 🗑️ DELETE BUTTON HANDLER
   const deleteCont = document.createElement("div");
   cardCont.addEventListener("mouseover", () => {
-    if (!document.querySelector(".delete-button")) {
+    // Prevent multiple delete buttons per card
+    if (!cardCont.querySelector(".delete-button")) {
       deleteCont.classList.add("delete-container");
       const deleteBtn = document.createElement("img");
       deleteBtn.classList.add("delete-button");
@@ -141,36 +178,41 @@ function setCity(data) {
         //I need to first get the stored object, then run filter on it and then overwrite it
         const savedCities =
           JSON.parse(localStorage.getItem("savedCities")) || [];
+        //Now I leave out the one I don't want
         const updatedCities = savedCities.filter(
-          (city) => city.city !== f.city && city.region !== f.region
+          (city) =>
+            !(city.city === forecast.city && city.region === forecast.region)
         );
+        //Here I overwrite it with the updated list of cities
         localStorage.setItem("savedCities", JSON.stringify(updatedCities));
-        const city = getFirstSavedCity();
-        const forecast = await getWeather(city);
-        setHomeUI(forecast);
-        // Hide/Show depending on whether there are saved cities
-        if (savedCities.length === 1) {
-          forecastContainer.style.transform = "translate(-4.6vw)";
+
+        if (updatedCities.length > 0) {
+          const firstCity = getFirstSavedCity();
+          const forecast = await getWeather(firstCity);
+          setHomeUI(forecast);
+        } else {
+          // Hide if there are no saved cities
+          forecastContainer.style.left = "-97px";
           navBar.style.left = "-220px";
           addButton.style.display = "flex";
           setTimeout(() => {
-            const noCitiesMsg = document.createElement("p");
-            noCitiesMsg.classList.add("no-saved-cities");
-            noCitiesMsg.textContent = "No saved cities yet";
-            navCont.appendChild(noCitiesMsg);
+            createNoSavedCitiesMsg();
           }, 1000);
         }
       });
     }
   });
+
   cardCont.addEventListener("mouseleave", () => {
-    const deleteBtn = document.querySelector(".delete-button");
+    const deleteBtn = cardCont.querySelector(".delete-button");
     if (deleteBtn) deleteBtn.remove();
   });
 }
-
+//---------------------------------------------------------------------
+// ➕ ADD CITY TO SIDEBAR
+//---------------------------------------------------------------------
 let handleClick = null;
-// Declare it outside so the reference can persist across multiple calls.
+// Declare HandleClick outside so the reference can persist across multiple calls.
 // Can't initialize it inside addCity because
 // every time the city is called, a new version of handleClick is declared
 // with value "null", so there is never anything to remove to begin with.
@@ -208,47 +250,41 @@ function addCity(forecastData) {
         cityData.city === data.city && cityData.region === data.region
     );
     // Since the city doesn’t exist yet, add the new city data to the savedCities array
-    // Now savedCities contains the previously saved cities plus this new city
     if (!cityExists) {
       savedCities.push(data);
-      // Save the updated savedCities array back to localStorage under the same key,
-      // thefore overwriting the old data with the new array that includes all cities
+      // Now savedCities contains the previously saved cities plus this new city
+      //Overwrite savedCities in the localStorage with the new data
       localStorage.setItem("savedCities", JSON.stringify(savedCities));
       setCity(data);
       setTimeout(() => (addButton.style.opacity = "0"), 1000);
       addIcon.textContent = "check_circle";
       addText.textContent = "Added";
-      navBar.style.left = "0";
+      navBar.style.left = "0px";
+      forecastContainer.style.left = "0px";
     }
   };
 
   addButton.addEventListener("click", handleClick);
 }
-
+//---------------------------------------------------------------------
+// 📤 LOAD SAVED CITIES ON STARTUP
+//---------------------------------------------------------------------
 function showSavedCities() {
   // Get all the cities currently saved in the localStorage (array of objects)
-  const savedCities = JSON.parse(localStorage.getItem("savedCities"));
-
-  const navCont = document.querySelector(".nav-container");
-  // Remove existing "no cities" message if it's already there
-
-  if (savedCities.length === 0) {
-    const noCitiesMsg = document.createElement("p");
-    noCitiesMsg.classList.add("no-saved-cities");
-    noCitiesMsg.textContent = "No saved cities yet.";
-    navCont.appendChild(noCitiesMsg);
-    return; // No cities to render, exit early
-  }
-
+  const savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
   // For every object in the array (cityData) run setCity with "cityData" instead of the current forecastData,
   // therefore creating a new card for each city and its data stored in the localStorage
   // This way, each card can still use the data used at the moment of pressing "Add"
-  savedCities.forEach((cityData) => setCity(cityData));
+  if (savedCities.length > 0)
+    savedCities.forEach((cityData) => setCity(cityData));
+  else {
+    createNoSavedCitiesMsg();
+  }
 }
 
 export { addCity, showSavedCities };
 
-// ALTERNATIVE
+// ALTERNATIVE (DO NOT USE THE BELOW CODE)
 // let savedCities;
 // const rawData = localStorage.getItem("savedCities");
 // if(rawData === null) {
