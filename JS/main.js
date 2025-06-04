@@ -12,15 +12,14 @@ import { moveSunBall } from "./sunset.js";
 import { setHumidity } from "./humidity.js";
 import { setVisibility } from "./visibility-km.js";
 import { addCity, showSavedCities } from "./add-city.js";
+import { getSidebarStatus } from "./sidebar.js";
 
 const search = document.querySelector(".search");
-const navBar = document.querySelector(".navbar");
-const forecastContainer = document.querySelector("#main-container");
 
-// navBar.style.display = "block";
 // DOMContentLoaded loads faster than "load" event
 window.addEventListener("DOMContentLoaded", () => {
-  // navBar.style.display = "block";
+  // 🧠 Restore sidebar position from localStorage or set default
+
   // Initial API call triggered with city = "copenhagen"
   firstRun();
 
@@ -30,9 +29,20 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 async function firstRun() {
+  const sidebarStatus = getSidebarStatus();
+  if (sidebarStatus) {
+    document.documentElement.style.setProperty(
+      "--sidebarLeft",
+      sidebarStatus.navBarPosition
+    );
+    document.documentElement.style.setProperty(
+      "--forecastContainerLeft",
+      sidebarStatus.forecastContainerPosition
+    );
+  }
+
   const city = getFirstSavedCity();
   const forecastData = await getWeather(city);
-  // navBar.style.display = "none";
   const addButton = document.querySelector(".add-btn");
   addButton.style.display = "flex";
 
@@ -51,16 +61,9 @@ async function firstRun() {
 
 function getFirstSavedCity() {
   const savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
-  if (savedCities.length === 0) {
-    forecastContainer.style.left = "-97px";
-    navBar.style.left = "-220px";
-    return undefined;
-  } else {
-    navBar.style.left = "0px";
-    forecastContainer.style.left = "0px";
-    const city = `${savedCities[0].lat},${savedCities[0].lon}`;
-
-    return city;
+  if (savedCities.length === 0) return undefined;
+  else {
+    return `${savedCities[0].latitude},${savedCities[0].longitude}`;
   }
 }
 
@@ -104,6 +107,7 @@ function createForecastData(weather, astronomy) {
 }
 
 async function getWeather(city = "copenhagen") {
+  console.log(city);
   const weatherURL = `${BASE_URL}forecast.json?key=${API}&q=${city}&days=10&aqi=yes&alerts=no`;
   const astronomyURL = `${BASE_URL}astronomy.json?key=${API}&q=${city}`;
   //WEATHER REQUEST

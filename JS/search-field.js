@@ -84,6 +84,9 @@ function createSuggestions(citiesArray) {
     });
 
     listItem.addEventListener("click", async () => {
+      // Here I use "lat" and "lon" and not "latitude" and "longitude"
+      // because I take this from the fetch API response object, where
+      // the key names are "lat" and "lon"
       await selectCity(`${city.lat},${city.lon}`);
     });
 

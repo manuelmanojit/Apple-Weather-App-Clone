@@ -1,3 +1,8 @@
+/* :root {
+  --sidebarLeft: 0px;
+  --forecastContainerLeft: 0px;
+} */
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -37,6 +42,7 @@ body {
   height: 100vh;
   transition: all 300ms ease-in-out;
   position: relative;
+  left: var(--sidebarLeft);
 }
 
 .nav-container {
@@ -176,6 +182,7 @@ body {
   flex-grow: 1;
   transition: all 300ms ease-in-out;
   position: relative;
+  left: var(--forecastContainerLeft);
 }
 
 .add-and-search {

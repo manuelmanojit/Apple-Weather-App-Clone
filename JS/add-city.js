@@ -10,28 +10,6 @@ const addText = document.querySelector(".add-btn p");
 
 addButton.style.display = "flex";
 addButton.style.opacity = "1";
-//---------------------------------------------------------------------
-// 📦 SIDEBAR TOGGLE HANDLER
-//---------------------------------------------------------------------
-(function useSidebarIcon() {
-  const sidebarIcon = document.querySelector(".side-bar-icon");
-
-  sidebarIcon.addEventListener("click", () => {
-    if (
-      navBar.style.left === "-220px" &&
-      forecastContainer.style.left === "-97px"
-    ) {
-      navBar.style.left = "0px";
-      forecastContainer.style.left = "0px";
-    } else if (
-      navBar.style.left === "0px" &&
-      forecastContainer.style.left === "0px"
-    ) {
-      navBar.style.left = "-220px";
-      forecastContainer.style.left = "-97px";
-    }
-  });
-})();
 
 //---------------------------------------------------------------------
 // 📝 CREATE NO SAVED CITIES YET MESSAGE
@@ -56,6 +34,7 @@ function createElement(elementType, className, content) {
 //---------------------------------------------------------------------
 function setCity(data) {
   const forecast = data;
+  console.log(forecast);
   const timezone = data.timezone;
   const navContainer = document.querySelector(".nav-container");
 
@@ -142,7 +121,9 @@ function setCity(data) {
     //I don't want that the delete button triggers this logic
     if (e.target.classList.contains("delete-button")) return;
     //Forecast comes from the same first call that created the saved city card
-    const thisCardForecast = await getWeather(forecast.city);
+    const thisCardForecast = await getWeather(
+      `${forecast.latitude},${forecast.longitude}`
+    );
 
     let savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
     const cityExists = savedCities.some(
@@ -173,7 +154,9 @@ function setCity(data) {
       cardCont.prepend(deleteCont);
 
       deleteBtn.addEventListener("click", async () => {
+        console.log(wrapper);
         wrapper.remove();
+        console.log(wrapper);
         //I need to get all the array items back but except the one i want to delete
         //I need to first get the stored object, then run filter on it and then overwrite it
         const savedCities =
@@ -186,19 +169,30 @@ function setCity(data) {
         //Here I overwrite it with the updated list of cities
         localStorage.setItem("savedCities", JSON.stringify(updatedCities));
 
-        if (updatedCities.length > 0) {
-          const firstCity = getFirstSavedCity();
-          const forecast = await getWeather(firstCity);
-          setHomeUI(forecast);
-        } else {
+        if (updatedCities.length === 0) {
           // Hide if there are no saved cities
-          forecastContainer.style.left = "-97px";
-          navBar.style.left = "-220px";
+          document.documentElement.style.setProperty("--sidebarLeft", "-220px");
+          document.documentElement.style.setProperty(
+            "--forecastContainerLeft",
+            "-97px"
+          );
+          localStorage.setItem(
+            "sidebarStatus",
+            JSON.stringify({
+              navBarPosition: "-220px",
+              forecastContainerPosition: "-97px",
+            })
+          );
           addButton.style.display = "flex";
           setTimeout(() => {
             createNoSavedCitiesMsg();
           }, 1000);
+        } else {
+          const firstCity = getFirstSavedCity();
+          const forecast = await getWeather(firstCity);
+          setHomeUI(forecast);
         }
+        console.log(updatedCities.length);
       });
     }
   });
@@ -236,8 +230,8 @@ function addCity(forecastData) {
       tempMax: forecastData.tempMax,
       tempMin: forecastData.tempMin,
       timezone: forecastData.cityTimezone,
-      lat: forecastData.latitude,
-      lon: forecastData.longitude,
+      latitude: forecastData.latitude,
+      longitude: forecastData.longitude,
     };
 
     getFirstSavedCity();
@@ -259,8 +253,11 @@ function addCity(forecastData) {
       setTimeout(() => (addButton.style.opacity = "0"), 1000);
       addIcon.textContent = "check_circle";
       addText.textContent = "Added";
-      navBar.style.left = "0px";
-      forecastContainer.style.left = "0px";
+      document.documentElement.style.setProperty("--sidebarLeft", "0px");
+      document.documentElement.style.setProperty(
+        "--forecastContainerLeft",
+        "0px"
+      );
     }
   };
 
