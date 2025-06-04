@@ -26,6 +26,7 @@ window.addEventListener("DOMContentLoaded", () => {
   // This function reads the localStorage and creates a card for each city added with "Add"
   showSavedCities();
   search.focus();
+  document.documentElement.style.setProperty("--backgroundOpacity", "1");
 });
 
 async function firstRun() {
@@ -41,7 +42,11 @@ async function firstRun() {
     );
   }
 
-  const city = getFirstSavedCity();
+  const lastSelectedCity = JSON.parse(localStorage.getItem("lastSelectedCity"));
+
+  let city;
+  if (lastSelectedCity) city = lastSelectedCity;
+  else city = getFirstSavedCity();
   const forecastData = await getWeather(city);
   const addButton = document.querySelector(".add-btn");
   addButton.style.display = "flex";

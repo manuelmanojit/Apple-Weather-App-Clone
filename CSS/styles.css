@@ -1,7 +1,6 @@
-/* :root {
-  --sidebarLeft: 0px;
-  --forecastContainerLeft: 0px;
-} */
+:root {
+  --backgroundOpacity: 0;
+}
 
 * {
   box-sizing: border-box;
@@ -15,6 +14,7 @@ body {
   height: 100vh;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     sans-serif;
+  background: rgb(80, 80, 80);
 }
 
 /* MASTER CONTAINER */
@@ -26,6 +26,8 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  transition: opacity 250ms ease-in;
+  opacity: var(--backgroundOpacity);
 }
 
 .header {

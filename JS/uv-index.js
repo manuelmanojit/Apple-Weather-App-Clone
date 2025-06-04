@@ -18,7 +18,7 @@ function getSunProtectionRequirement(forecastData) {
 
   if (!night) {
     if (currentHour < last) {
-      caption.textContent = `Use sun protection ${first}:00 and ${last}:00.`;
+      caption.textContent = `Use sun protection ${first}:00 to ${last}:00.`;
     } else {
       caption.textContent = "Low UV for the rest of the day.";
     }

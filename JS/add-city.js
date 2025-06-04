@@ -131,10 +131,16 @@ function setCity(data) {
         cityData.city === thisCardForecast.city &&
         cityData.region === thisCardForecast.region
     );
+    const lastSelectedCity = JSON.parse(
+      localStorage.getItem("lastSelectedCity")
+    );
+    console.log(lastSelectedCity);
     // 💾 Save this city as the last selected one so it loads by default on page refresh or app startup
     localStorage.setItem(
       "lastSelectedCity",
-      `${thisCardForecast.latitude},${thisCardForecast.longitude}`
+      JSON.stringify(
+        `${thisCardForecast.latitude},${thisCardForecast.longitude}`
+      )
     );
     if (cityExists) addButton.style.display = "none";
     // This sets the Home UI with this last clicked city

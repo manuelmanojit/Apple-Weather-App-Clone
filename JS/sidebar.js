@@ -8,7 +8,6 @@ function getSidebarStatus() {
     }
   );
 }
-
 //get the status from the storage
 //check if the sidebar is hidden at the start,
 //if it was first page visit, set default with || operator
