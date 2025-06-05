@@ -42,7 +42,7 @@ async function firstRun() {
     );
   }
 
-  const lastSelectedCity = JSON.parse(localStorage.getItem("lastSelectedCity"));
+  const lastSelectedCity = localStorage.getItem("lastSelectedCity");
 
   let city;
   if (lastSelectedCity) city = lastSelectedCity;
