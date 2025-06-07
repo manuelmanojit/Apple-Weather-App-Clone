@@ -10,20 +10,29 @@ addButton.style.display = "flex";
 addButton.style.opacity = "1";
 
 //--------------------------------------
-// 📋 GET SAVED CITIES FROM LOCAL STORAGE
+// 📋 SET AND GET SAVED CITIES FROM LOCAL STORAGE
 //--------------------------------------
-function getSavedCities() {
-  return JSON.parse(localStorage.getItem("savedCities")) || [];
+function setSavedCities(cities) {
+  localStorage.setItem("savedCities", JSON.stringify(cities));
 }
+function getSavedCities() {
+  try {
+    return JSON.parse(localStorage.getItem("savedCities")) || [];
+  } catch (error) {
+    console.warn("Error retrieving saved cities:", error);
+    return []; // Return an empty array anyways if there's an error
+  }
+}
+
 //--------------------------------------
 // 📝 CREATE NO SAVED CITIES YET MESSAGE
 //--------------------------------------
 function createNoSavedCitiesMsg() {
-  const navContainer = document.querySelector(".nav-container");
+  const allCitiesContainer = document.querySelector(".nav-container");
   const noCitiesMsg = document.createElement("p");
   noCitiesMsg.classList.add("no-saved-cities");
   noCitiesMsg.textContent = "No saved cities yet";
-  navContainer.appendChild(noCitiesMsg);
+  allCitiesContainer.appendChild(noCitiesMsg);
 }
 //------------------
 // 📝 TOGGLE SIDEBAR
@@ -59,10 +68,10 @@ function createElement(elementType, className, content) {
 // 📝 CREATE EACH SAVED CITIES CARD
 //---------------------------------
 function createSavedCityCard(forecast) {
-  const navContainer = document.querySelector(".nav-container");
+  const allCitiesContainer = document.querySelector(".nav-container");
   // 🧱 CARD STRUCTURE
-  const wrapper = createElement("div", "nav-element-wrapper");
-  const cardCont = createElement("div", "nav-element-container");
+  const cityWrapper = createElement("div", "nav-element-wrapper");
+  const cityContainer = createElement("div", "nav-element-container");
   // 🔝 TOP PART OF CARD
   const topInner = createElement("div", "top-inner-nav");
   const topLeft = createElement("div", "top-left-inner-nav");
@@ -101,98 +110,116 @@ function createSavedCityCard(forecast) {
   topInner.append(topLeft, temperature);
   maxmin.append(maxText, maxValue, minText, minValue);
   bottomInner.append(condition, maxmin);
-  cardCont.append(topInner, bottomInner);
-  wrapper.append(cardCont, horizontalLine);
-  navContainer.appendChild(wrapper);
-  return [navContainer, cardCont, wrapper];
+  cityContainer.append(topInner, bottomInner);
+  cityWrapper.append(cityContainer, horizontalLine);
+  allCitiesContainer.appendChild(cityWrapper);
+  return [allCitiesContainer, cityContainer, cityWrapper];
 }
-//---------------------------------------------------------------------
-// 🌆 CREATE CITY CARD
-//---------------------------------------------------------------------
+//---------------------------
+// 🌆 HANDLE CITY CARD EVENTS
+//---------------------------
 function handleSavedCitiesEvents(data) {
   const forecast = data;
-  const [navContainer, cardCont, wrapper] = createSavedCityCard(forecast);
+  const [allCitiesContainer, cityContainer, cityWrapper] =
+    createSavedCityCard(forecast);
+  // ----------------------------
+  // OLD VERSION:
+  // I was adding a separate click listener to *each* city card one by one.
+  // So every time the list of cities changed (like after a search or update),
+  // I'd re-run this code — and stack more and more listeners onto the same cards.
+  // That bloats memory and makes the app slower and harder to debug over time.
+  // It’s like gluing a new wire on top of the old ones every time I update the panel — messy.
+  // NEW VERSION:
+  // I add ONE listener to the container that *holds* all the city cards.
+  // Now clicks are handled through event delegation — one smart listener at the top.
+  // No matter how many cards I add or remove, the click just works — clean and efficient.
+  // It’s like placing one big listening mat under the group instead of rewiring each button.
+  // Much simpler, and I never have to worry about duplicate listeners or performance issues.
+  // ----------------------------
+  // 🖱️ SELECT ACTIVE CITY AND CHANGE STYLING
+  allCitiesContainer.addEventListener("click", (e) => {
+    // The .closest() method travels up the DOM tree from the element it is called on
+    // It searches for the closest ancestor (which can be the element itself)
+    // that matches the CSS selector passed to it. If it finds a matching ancestor,
+    // it returns that element. If it doesn't find one, it returns null.
+    const clickedCity = e.target.closest(".nav-element-wrapper");
+    if (!clickedCity) return;
 
-  // 🖱️ SELECT ACTIVE CITY
-  const displayedCities = Array.from(navContainer.children);
-  displayedCities.forEach((city) => {
-    city.addEventListener("click", () => {
-      displayedCities.forEach((city) =>
-        city.firstChild.classList.remove("active")
-      );
-      city.firstChild.classList.add("active");
-    });
+    Array.from(allCitiesContainer.children).forEach((city) =>
+      //firstChild because I only want cityContainer, not cityWrapper
+      city.firstChild.classList.remove("active")
+    );
+
+    clickedCity.firstChild.classList.add("active");
   });
+
   // 🔁 LOAD CITY ON CLICK
-  cardCont.addEventListener("click", async (e) => {
+  cityContainer.addEventListener("click", async (e) => {
     if (e.target.classList.contains("delete-button")) return;
     const thisCardForecast = await getWeather(
       `${forecast.latitude},${forecast.longitude}`
     );
-    const savedCities = getSavedCities();
-    const cityExists = savedCities.some(
+    const cityExists = getSavedCities().some(
       (cityData) =>
         cityData.city === thisCardForecast.city &&
         cityData.region === thisCardForecast.region
     );
-    const lastSelectedCity = localStorage.getItem("lastSelectedCity");
-    console.log(lastSelectedCity);
+    if (cityExists) addButton.style.display = "none";
+    setHomeUI(thisCardForecast);
     // 💾 Save this city as the last selected one so it loads by default on page refresh or app startup
     localStorage.setItem(
       "lastSelectedCity",
       `${thisCardForecast.latitude},${thisCardForecast.longitude}`
     );
-    if (cityExists) addButton.style.display = "none";
-    // This sets the Home UI with this last clicked city
-    setHomeUI(thisCardForecast);
   });
+
+  function createDeleteButton(thisCityContainer) {
+    const deleteCont = document.createElement("div");
+    const deleteBtn = document.createElement("img");
+
+    deleteCont.classList.add("delete-container");
+    deleteBtn.classList.add("delete-button");
+    deleteBtn.src = "../SVGs/delete.svg";
+
+    deleteCont.appendChild(deleteBtn);
+    thisCityContainer.prepend(deleteCont);
+
+    return deleteBtn;
+  }
+
   // 🗑️ DELETE BUTTON HANDLER
-  const deleteCont = document.createElement("div");
-  cardCont.addEventListener("mouseover", () => {
+  cityContainer.addEventListener("mouseover", () => {
     // Prevent multiple delete buttons per card
-    if (!cardCont.querySelector(".delete-button")) {
-      deleteCont.classList.add("delete-container");
-      const deleteBtn = document.createElement("img");
-      deleteBtn.classList.add("delete-button");
-      deleteBtn.src = "../SVGs/delete.svg";
-      deleteCont.appendChild(deleteBtn);
-      cardCont.prepend(deleteCont);
+    if (cityContainer.querySelector(".delete-button")) return;
 
-      deleteBtn.addEventListener("click", async () => {
-        console.log(wrapper);
-        wrapper.remove();
-        console.log(wrapper);
-        //I need to get all the array items back but except the one i want to delete
-        //I need to first get the stored object, then run filter on it and then overwrite it
-        const savedCities = getSavedCities();
-        //Now I leave out the one I don't want
-        const updatedCities = savedCities.filter(
-          (city) =>
-            !(city.city === forecast.city && city.region === forecast.region)
-        );
-        //Here I overwrite it with the updated list of cities
-        localStorage.setItem("savedCities", JSON.stringify(updatedCities));
+    const deleteBtn = createDeleteButton(cityContainer);
 
-        if (updatedCities.length === 0) {
-          // Hide if there are no saved cities
-          makeSidebarVisible(false);
-          addButton.style.display = "flex";
-          addButton.style.opacity = "1";
-          setTimeout(() => {
-            createNoSavedCitiesMsg();
-          }, 1000);
-        } else {
-          const firstCity = getFirstSavedCity();
-          const forecast = await getWeather(firstCity);
-          setHomeUI(forecast);
-        }
-        console.log(updatedCities.length);
-      });
-    }
+    deleteBtn.addEventListener("click", async () => {
+      cityWrapper.remove();
+      //I need to get all the array items back but except the one i want to delete
+      //I need to first get the stored object, then run filter on it and then overwrite it
+      const updatedCities = getSavedCities().filter(
+        (city) =>
+          !(city.city === forecast.city && city.region === forecast.region)
+      );
+      setSavedCities(updatedCities);
+
+      if (!updatedCities.length) {
+        makeSidebarVisible(false);
+        addButton.style.display = "flex";
+        addButton.style.opacity = "1";
+        setTimeout(createNoSavedCitiesMsg, 1000);
+        return;
+      } else {
+        const firstCity = getFirstSavedCity();
+        const forecast = await getWeather(firstCity);
+        setHomeUI(forecast);
+      }
+    });
   });
 
-  cardCont.addEventListener("mouseleave", () => {
-    const deleteBtn = cardCont.querySelector(".delete-button");
+  cityContainer.addEventListener("mouseleave", () => {
+    const deleteBtn = cityContainer.querySelector(".delete-button");
     if (deleteBtn) deleteBtn.remove();
   });
 }
@@ -229,21 +256,19 @@ function addCity(forecastData) {
     };
 
     getFirstSavedCity();
-    // Retrieve the saved cities array from localStorage, or use an empty array if nothing is saved yet
     // If we have one city object saved, we read it from the localStorage
     const savedCities = getSavedCities();
-    // Check if the new city (from data) already exists in the savedCities
-    const cityExists = savedCities.some(
+    const cityExists = getSavedCities().some(
       (cityData) =>
         cityData.city === data.city && cityData.region === data.region
     );
-    // Since the city doesn’t exist yet, add the new city data to the savedCities array
     if (cityExists) return;
-
+    // Since the city doesn’t exist yet, add the new city data to the savedCities array
     savedCities.push(data);
     // Now savedCities contains the previously saved cities plus this new city
-    //Overwrite savedCities in the localStorage with the new data
-    localStorage.setItem("savedCities", JSON.stringify(savedCities));
+    // Overwrite savedCities in the localStorage with the new data
+    setSavedCities(savedCities);
+    // Create a new card for the newly added city
     handleSavedCitiesEvents(data);
     setTimeout(() => {
       addButton.style.opacity = "0";
@@ -266,9 +291,8 @@ function addCity(forecastData) {
 function showSavedCities() {
   // Get all the cities currently saved in the localStorage (array of objects)
   const savedCities = getSavedCities();
-  // For every object in the array (cityData) run setCity with "cityData" instead of the current forecastData,
-  // therefore creating a new card for each city and its data stored in the localStorage
-  // This way, each card can still use the data used at the moment of pressing "Add"
+  // For every city in the array run setCity with the data from the localStorage
+  // so that it matches the correct city
   if (savedCities.length > 0)
     savedCities.forEach((cityData) => handleSavedCitiesEvents(cityData));
   else {
@@ -277,12 +301,3 @@ function showSavedCities() {
 }
 
 export { addCity, showSavedCities };
-
-// ALTERNATIVE (DO NOT USE THE BELOW CODE)
-// let savedCities;
-// const rawData = localStorage.getItem("savedCities");
-// if(rawData === null) {
-//     savedCities = [];
-// } else {
-//     savedCities = JSON.parse(rawData);
-// }
