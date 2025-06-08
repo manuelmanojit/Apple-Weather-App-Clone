@@ -1,14 +1,71 @@
 import { getCurrentHourAndMinutes } from "./utility-functions.js";
-import { getWeather, setHomeUI, getFirstSavedCity } from "./main.js";
+import { getWeather, setMainForecastUI, getFirstSavedCity } from "./main.js";
 
 // 🌐 DOM ELEMENTS
 const addButton = document.querySelector(".add-btn");
 const addIcon = document.querySelector(".add-btn span");
 const addText = document.querySelector(".add-btn p");
+const sidebarIcon = document.querySelector(".side-bar-icon");
 
 addButton.style.display = "flex";
 addButton.style.opacity = "1";
 
+//get the status from the storage
+//check if the sidebar is hidden at the start,
+//if it was first page visit, set default with || operator
+//if it is hidden, then the saved object should be overwritten
+//set html properties with correct
+sidebarIcon.addEventListener("click", () => {
+  // If I define sidebarStatus outside of the event listener, it is only read once. It becomes
+  // a static snapshot of what was in localStorage in the beginning, not the most recent change
+  const sidebarStatus = getSidebarStatus();
+  const isHidden =
+    sidebarStatus.navBarPosition === "-220px" &&
+    sidebarStatus.forecastContainerPosition === "-97px";
+
+  const updatedStatus = isHidden
+    ? {
+        navBarPosition: "0px",
+        forecastContainerPosition: "0px",
+      }
+    : {
+        navBarPosition: "-220px",
+        forecastContainerPosition: "-97px",
+      };
+
+  localStorage.setItem("sidebarStatus", JSON.stringify(updatedStatus));
+
+  document.documentElement.style.setProperty(
+    "--sidebarLeft",
+    updatedStatus.navBarPosition
+  );
+  document.documentElement.style.setProperty(
+    "--forecastContainerLeft",
+    updatedStatus.forecastContainerPosition
+  );
+});
+
+function getSidebarStatus() {
+  return (
+    JSON.parse(localStorage.getItem("sidebarStatus")) || {
+      navBarPosition: "-220px",
+      forecastContainerPosition: "-97px",
+    }
+  );
+}
+function loadSidebar() {
+  const sidebarStatus = getSidebarStatus();
+  if (!sidebarStatus) return;
+
+  document.documentElement.style.setProperty(
+    "--sidebarLeft",
+    sidebarStatus.navBarPosition
+  );
+  document.documentElement.style.setProperty(
+    "--forecastContainerLeft",
+    sidebarStatus.forecastContainerPosition
+  );
+}
 //--------------------------------------
 // 📋 SET AND GET SAVED CITIES FROM LOCAL STORAGE
 //--------------------------------------
@@ -115,6 +172,20 @@ function createSavedCityCard(forecast) {
   allCitiesContainer.appendChild(cityWrapper);
   return [allCitiesContainer, cityContainer, cityWrapper];
 }
+
+function createDeleteButton(thisCityContainer) {
+  const deleteCont = document.createElement("div");
+  const deleteBtn = document.createElement("img");
+
+  deleteCont.classList.add("delete-container");
+  deleteBtn.classList.add("delete-button");
+  deleteBtn.src = "../SVGs/delete.svg";
+
+  deleteCont.appendChild(deleteBtn);
+  thisCityContainer.prepend(deleteCont);
+
+  return deleteBtn;
+}
 //---------------------------
 // 🌆 HANDLE CITY CARD EVENTS
 //---------------------------
@@ -153,40 +224,55 @@ function handleSavedCitiesEvents(data) {
     clickedCity.firstChild.classList.add("active");
   });
 
+  // // 🔁 LOAD CITY ON CLICK
+  // allCitiesContainer.addEventListener("click", async (e) => {
+  //   // Start at the clicked element and walk up the DOM tree
+  //   // until you find an element with this class name, which can also be THIS element
+  //   // If found, store it in the variable card. If not found return null
+  //   const card = e.target.closest(".nav-element-container");
+  //   if (!card) return;
+
+  //   const thisCardForecast = await getWeather(
+  //     `${forecast.latitude},${forecast.longitude}`
+  //   );
+
+  //   const isThisCitySaved = getSavedCities().some(
+  //     (cityData) =>
+  //       cityData.city === thisCardForecast.city &&
+  //       cityData.region === thisCardForecast.region
+  //   );
+  //   if (isThisCitySaved) addButton.style.display = "none";
+  //   setMainForecastUI(thisCardForecast);
+
+  //   // 💾 Save this city as the last selected one so it loads by default on page refresh or app startup
+  //   localStorage.setItem(
+  //     "lastSelectedCity",
+  //     `${thisCardForecast.latitude},${thisCardForecast.longitude}`
+  //   );
+  // });
+
   // 🔁 LOAD CITY ON CLICK
   cityContainer.addEventListener("click", async (e) => {
     if (e.target.classList.contains("delete-button")) return;
+
     const thisCardForecast = await getWeather(
       `${forecast.latitude},${forecast.longitude}`
     );
-    const cityExists = getSavedCities().some(
+
+    const isThisCitySaved = getSavedCities().some(
       (cityData) =>
         cityData.city === thisCardForecast.city &&
         cityData.region === thisCardForecast.region
     );
-    if (cityExists) addButton.style.display = "none";
-    setHomeUI(thisCardForecast);
+    if (isThisCitySaved) addButton.style.display = "none";
+    setMainForecastUI(thisCardForecast);
+
     // 💾 Save this city as the last selected one so it loads by default on page refresh or app startup
     localStorage.setItem(
       "lastSelectedCity",
       `${thisCardForecast.latitude},${thisCardForecast.longitude}`
     );
   });
-
-  function createDeleteButton(thisCityContainer) {
-    const deleteCont = document.createElement("div");
-    const deleteBtn = document.createElement("img");
-
-    deleteCont.classList.add("delete-container");
-    deleteBtn.classList.add("delete-button");
-    deleteBtn.src = "../SVGs/delete.svg";
-
-    deleteCont.appendChild(deleteBtn);
-    thisCityContainer.prepend(deleteCont);
-
-    return deleteBtn;
-  }
-
   // 🗑️ DELETE BUTTON HANDLER
   cityContainer.addEventListener("mouseover", () => {
     // Prevent multiple delete buttons per card
@@ -213,14 +299,18 @@ function handleSavedCitiesEvents(data) {
       } else {
         const firstCity = getFirstSavedCity();
         const forecast = await getWeather(firstCity);
-        setHomeUI(forecast);
+        setMainForecastUI(forecast);
+        // If I don't do the below, once I delete a city and I refresh the page
+        // the page will reload with the forecast of the city I just deleted
+        const lastCity = localStorage.getItem("lastSelectedCity");
+        if (lastCity !== firstCity) localStorage.removeItem("lastSelectedCity");
       }
     });
   });
 
   cityContainer.addEventListener("mouseleave", () => {
-    const deleteBtn = cityContainer.querySelector(".delete-button");
-    if (deleteBtn) deleteBtn.remove();
+    if (!cityContainer.querySelector(".delete-button")) return;
+    else cityContainer.querySelector(".delete-button").remove();
   });
 }
 //---------------------------------------------------------------------
@@ -233,17 +323,18 @@ let handleClick = null;
 // with value "null", so there is never anything to remove to begin with.
 // This way, the old event listener remains active. So, on every page load,
 // addCity will run with the initial city, plus create an additional card
-function addCity(forecastData) {
+function addNewCity(forecastData) {
   // If the event listener has already been used, remove it
   if (handleClick) {
     addButton.removeEventListener("click", handleClick);
   }
+
   // Once the event listener is used, handleClick goes from "null" (false) to true
   handleClick = () => {
     const existingNoCitiesMsg = document.querySelector(".no-saved-cities");
     if (existingNoCitiesMsg) existingNoCitiesMsg.remove();
 
-    const data = {
+    const newCityData = {
       city: forecastData.city,
       region: forecastData.region,
       temperature: forecastData.temperature,
@@ -254,22 +345,14 @@ function addCity(forecastData) {
       latitude: forecastData.latitude,
       longitude: forecastData.longitude,
     };
-
-    getFirstSavedCity();
-    // If we have one city object saved, we read it from the localStorage
+    // Add the new city data to the savedCities array (parsed from storage)
+    // So that savedCities contains also this new city
+    // Then overwrite savedCities in the localStorage with the new data
     const savedCities = getSavedCities();
-    const cityExists = getSavedCities().some(
-      (cityData) =>
-        cityData.city === data.city && cityData.region === data.region
-    );
-    if (cityExists) return;
-    // Since the city doesn’t exist yet, add the new city data to the savedCities array
-    savedCities.push(data);
-    // Now savedCities contains the previously saved cities plus this new city
-    // Overwrite savedCities in the localStorage with the new data
+    savedCities.push(newCityData);
     setSavedCities(savedCities);
-    // Create a new card for the newly added city
-    handleSavedCitiesEvents(data);
+    // Create a new card for the newly added city and add event listeners
+    handleSavedCitiesEvents(newCityData);
     setTimeout(() => {
       addButton.style.opacity = "0";
       addButton.style.display = "none";
@@ -281,6 +364,9 @@ function addCity(forecastData) {
     addIcon.textContent = "check_circle";
     addText.textContent = "Added";
     makeSidebarVisible(true);
+    setTimeout(() => {
+      document.querySelector(".search").focus();
+    }, 0);
   };
 
   addButton.addEventListener("click", handleClick);
@@ -300,4 +386,4 @@ function showSavedCities() {
   }
 }
 
-export { addCity, showSavedCities };
+export { addNewCity, showSavedCities, getSavedCities, loadSidebar };

@@ -5,7 +5,7 @@ import {
   getCloudyConditions,
   getRainyConditions,
   getSnowyConditions,
-} from "./get-weather-conditions.js";
+} from "../get-weather-conditions.js";
 
 // ✅ REFACTORED
 function getDate(forecastData, currentDay) {
@@ -25,63 +25,65 @@ function createDayName(forecast, day, currentDayName) {
   } else {
     dayName.textContent = "Today";
   }
-
   return dayName;
 }
 
-function setWeatherIcon(conditions) {
+function createWeatherIcon(forecastData, forecast, day) {
+  const conditions = forecastData.futureForecast[
+    forecast.indexOf(day)
+  ].day.condition.text
+    .trim()
+    .toLowerCase();
+  const iconContainer = document.createElement("div");
+  iconContainer.classList.add("forecast-icon-container");
   const weatherIcon = document.createElement("img");
   weatherIcon.classList.add("weather-icon");
-
-  let iconSet = false; // track if an icon was matched
-  const cond = conditions.trim().toLowerCase();
+  iconContainer.appendChild(weatherIcon);
 
   weatherIcon.src = ""; // set empty icon to begin with to allow update
 
-  if (getClearConditions().includes(cond)) {
+  if (getClearConditions().includes(conditions)) {
     weatherIcon.src = "../SVGs/clear-night.svg";
     weatherIcon.style.width = "12px";
-    iconSet = true;
+    return iconContainer;
   }
-  if (getPartlyCloudyConditions().includes(cond)) {
+  if (getPartlyCloudyConditions().includes(conditions)) {
     weatherIcon.src = "../SVGs/partly-sunny.svg";
     weatherIcon.style.width = "22px";
-    iconSet = true;
+    return iconContainer;
   }
 
-  if (getSunnyConditions().includes(cond)) {
+  if (getSunnyConditions().includes(conditions)) {
     weatherIcon.src = "../SVGs/sunny.svg";
     weatherIcon.style.width = "16px";
-    iconSet = true;
+    return iconContainer;
   }
-  if (getCloudyConditions().includes(cond)) {
+  if (getCloudyConditions().includes(conditions)) {
     weatherIcon.src = "../SVGs/cloudy.svg";
-    iconSet = true;
+    return iconContainer;
   }
-  if (getRainyConditions().includes(cond)) {
+  if (getRainyConditions().includes(conditions)) {
     weatherIcon.src = "../SVGs/rainy.svg";
-    iconSet = true;
+    return iconContainer;
   }
-  if (getSnowyConditions().includes(cond)) {
+  if (getSnowyConditions().includes(conditions)) {
     weatherIcon.src = "../SVGs/snowy.svg";
-    iconSet = true;
+    return iconContainer;
   }
-  if (!iconSet) {
-    console.warn("⚠️ No icon matched for condition:", cond);
+  if (!weatherIcon.src) {
+    console.warn("⚠️ No icon matched for condition:", conditions);
+    return iconContainer;
   }
-
-  return weatherIcon;
 }
-
-function createWeatherIcon(forecastData, forecast, day) {
-  const conditions =
-    forecastData.futureForecast[forecast.indexOf(day)].day.condition.text;
-  const iconContainer = document.createElement("div");
-  iconContainer.classList.add("forecast-icon-container");
-  const weatherIcon = setWeatherIcon(conditions);
-  iconContainer.appendChild(weatherIcon);
-  return iconContainer;
-}
+// function createWeatherIcon(forecastData, forecast, day) {
+//   const conditions =
+//     forecastData.futureForecast[forecast.indexOf(day)].day.condition.text;
+//   const iconContainer = document.createElement("div");
+//   iconContainer.classList.add("forecast-icon-container");
+//   const weatherIcon = chooseWeatherIcon(conditions);
+//   iconContainer.appendChild(weatherIcon);
+//   return iconContainer;
+// }
 
 function createMinimumTemp(forecastMinTemp) {
   //"MIN" ARROW
@@ -126,36 +128,37 @@ function setFutureForecast(forecastData) {
       forecastContainer.appendChild(hr);
     }
     //CREATE MAIN CONTAINER
-    const horizontalContainer = document.createElement("div");
-    horizontalContainer.classList.add("horizontal-container");
+    const dayContainer = document.createElement("div");
+    dayContainer.classList.add("horizontal-container");
 
     //📆 DISPLAY DAY
     const currentDayName = getDate(forecastData, forecast.indexOf(day));
     const dayName = createDayName(forecast, day, currentDayName);
-    horizontalContainer.appendChild(dayName);
 
     //🌥️ DISPLAY ICON
     const weatherIcon = createWeatherIcon(forecastData, forecast, day);
-    horizontalContainer.appendChild(weatherIcon);
 
     //🟢 DISPLAY MINIMUM TEMPERATURE
     const forecastMinTemp = Math.round(
       forecastData.futureForecast[forecast.indexOf(day)].day.mintemp_c
     );
     const [minArrow, minTemp] = createMinimumTemp(forecastMinTemp);
-    horizontalContainer.appendChild(minArrow);
-    horizontalContainer.appendChild(minTemp);
 
     //🔴 DISPLAY MAXIMUM TEMPERATURE
     const forecastMaxTemp = Math.round(
       forecastData.futureForecast[forecast.indexOf(day)].day.maxtemp_c
     );
     const [maxArrow, maxTemp] = createMaximumTemp(forecastMaxTemp);
-    horizontalContainer.appendChild(maxArrow);
-    horizontalContainer.appendChild(maxTemp);
 
-    //APPEND TO MAIN CONTAINER
-    forecastContainer.appendChild(horizontalContainer);
+    dayContainer.append(
+      dayName,
+      weatherIcon,
+      minArrow,
+      minTemp,
+      maxArrow,
+      maxTemp
+    );
+    forecastContainer.appendChild(dayContainer);
   }
 }
 

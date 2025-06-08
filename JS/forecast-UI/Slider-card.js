@@ -1,5 +1,5 @@
-import { getCurrentHour, formatTime } from "./utility-functions.js";
-import { isNight, getSunriseTime, getSunsetTime } from "./day-or-night.js";
+import { getCurrentHour, formatTime } from "../utility-functions.js";
+import { isNight, getSunriseTime, getSunsetTime } from "../day-or-night.js";
 import {
   getClearConditions,
   getPartlyCloudyConditions,
@@ -7,7 +7,7 @@ import {
   getCloudyConditions,
   getRainyConditions,
   getSnowyConditions,
-} from "./get-weather-conditions.js";
+} from "../get-weather-conditions.js";
 
 // ✅ REFACTORED
 function getSunriseAndSunsetFullTime(forecastData) {
@@ -100,8 +100,6 @@ function setWeatherIcon(weatherContext, weatherConditions, nightStatus) {
     setIconAttributes(icon, "../SVGs/partly-sunny.svg", "22px");
     return icon;
   }
-
-  return icon;
 }
 
 // ✅ REFACTORED

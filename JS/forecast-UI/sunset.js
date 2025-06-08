@@ -1,5 +1,5 @@
-import { getCurrentHour, formatTime } from "./utility-functions.js";
-import { isNight, getSunriseTime, getSunsetTime } from "./day-or-night.js";
+import { getCurrentHour, formatTime } from "../utility-functions.js";
+import { isNight, getSunriseTime, getSunsetTime } from "../day-or-night.js";
 
 const ball = document.querySelector(".sun-anim-ball");
 
@@ -36,14 +36,14 @@ function getPositionPercentage(forecastData) {
 }
 
 function setSunriseAndSunset(forecastData) {
-  const sunset = document.querySelector("#sunset-time");
-  const sunrise = document.querySelector("#sunset-caption");
+  const sunsetElement = document.querySelector("#sunset-time");
+  const sunriseElement = document.querySelector("#sunset-caption");
 
   const sunsetTime = forecastData.sunset;
   const sunriseTime = forecastData.sunrise;
 
-  sunset.textContent = formatTime(sunsetTime);
-  sunrise.textContent = `Sunrise: ${formatTime(sunriseTime)}`;
+  sunsetElement.textContent = formatTime(sunsetTime);
+  sunriseElement.textContent = `Sunrise: ${formatTime(sunriseTime)}`;
 }
 
 function moveSunBall(forecastData) {

@@ -1,68 +1,31 @@
 import { API, BASE_URL } from "./weatherAPI-config.js";
 import { setBackground } from "./set-background.js";
-import { setHeader } from "./header.js";
-import { setSliderTrio } from "./Slider-card.js";
-import { setFutureForecast } from "./10-day-forecast.js";
-import { getRainMap } from "./rain-map.js";
-import { setAirQuality } from "./air-quality.js";
-import { getFeelsLike } from "./feels-like.js";
-import { setWind } from "./wind.js";
-import { setUvIndex } from "./uv-index.js";
-import { moveSunBall } from "./sunset.js";
-import { setHumidity } from "./humidity.js";
-import { setVisibility } from "./visibility-km.js";
-import { addCity, showSavedCities } from "./add-city.js";
-import { getSidebarStatus } from "./sidebar.js";
+import { setHeader } from "./forecast-UI/header.js";
+import { setSliderTrio } from "./forecast-UI/Slider-card.js";
+import { setFutureForecast } from "./forecast-UI/10-day-forecast.js";
+import { getRainMap } from "./forecast-UI/rain-map.js";
+import { setAirQuality } from "./forecast-UI/air-quality.js";
+import { getFeelsLike } from "./forecast-UI/feels-like.js";
+import { setWind } from "./forecast-UI/wind.js";
+import { setUvIndex } from "./forecast-UI/uv-index.js";
+import { moveSunBall } from "./forecast-UI/sunset.js";
+import { setHumidity } from "./forecast-UI/humidity.js";
+import { setVisibility } from "./forecast-UI/visibility-km.js";
+import {
+  addNewCity,
+  showSavedCities,
+  getSavedCities,
+  loadSidebar,
+} from "./add-city.js";
 
 const search = document.querySelector(".search");
 
 // DOMContentLoaded loads faster than "load" event
 window.addEventListener("DOMContentLoaded", () => {
-  // 🧠 Restore sidebar position from localStorage or set default
-
-  // Initial API call triggered with city = "copenhagen"
-  firstRun();
-
-  // This function reads the localStorage and creates a card for each city added with "Add"
-  showSavedCities();
+  loadHomeUI();
   search.focus();
   document.documentElement.style.setProperty("--backgroundOpacity", "1");
 });
-
-async function firstRun() {
-  const sidebarStatus = getSidebarStatus();
-  if (sidebarStatus) {
-    document.documentElement.style.setProperty(
-      "--sidebarLeft",
-      sidebarStatus.navBarPosition
-    );
-    document.documentElement.style.setProperty(
-      "--forecastContainerLeft",
-      sidebarStatus.forecastContainerPosition
-    );
-  }
-
-  const lastSelectedCity = localStorage.getItem("lastSelectedCity");
-
-  let city;
-  if (lastSelectedCity) city = lastSelectedCity;
-  else city = getFirstSavedCity();
-  const forecastData = await getWeather(city);
-  const addButton = document.querySelector(".add-btn");
-  addButton.style.display = "flex";
-
-  let savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
-  const cityExists = savedCities.some(
-    (cityData) =>
-      cityData.city === forecastData.city &&
-      cityData.region === forecastData.region
-  );
-  if (cityExists) {
-    addButton.style.display = "none";
-  }
-
-  setHomeUI(forecastData);
-}
 
 function getFirstSavedCity() {
   const savedCities = JSON.parse(localStorage.getItem("savedCities")) || [];
@@ -70,6 +33,30 @@ function getFirstSavedCity() {
   else {
     return `${savedCities[0].latitude},${savedCities[0].longitude}`;
   }
+}
+
+async function loadHomeUI() {
+  loadSidebar();
+
+  let city;
+  const lastSelectedCity = localStorage.getItem("lastSelectedCity");
+  if (lastSelectedCity) city = lastSelectedCity;
+  else city = getFirstSavedCity();
+  const forecastData = await getWeather(city);
+
+  const addButton = document.querySelector(".add-btn");
+  addButton.style.display = "flex";
+
+  const areThereSavedCities = getSavedCities().some(
+    (cityData) =>
+      cityData.city === forecastData.city &&
+      cityData.region === forecastData.region
+  );
+  if (areThereSavedCities) {
+    addButton.style.display = "none";
+  }
+  showSavedCities();
+  setMainForecastUI(forecastData);
 }
 
 function createForecastData(weather, astronomy) {
@@ -112,7 +99,6 @@ function createForecastData(weather, astronomy) {
 }
 
 async function getWeather(city = "copenhagen") {
-  console.log(city);
   const weatherURL = `${BASE_URL}forecast.json?key=${API}&q=${city}&days=10&aqi=yes&alerts=no`;
   const astronomyURL = `${BASE_URL}astronomy.json?key=${API}&q=${city}`;
   //WEATHER REQUEST
@@ -128,13 +114,10 @@ async function getWeather(city = "copenhagen") {
   }
   const astronomy = await moonResp.json();
 
-  const forecast = createForecastData(weather, astronomy);
-
-  // console.log(forecast, weather);
-  return forecast;
+  return createForecastData(weather, astronomy);
 }
 
-async function setHomeUI(forecastData) {
+async function setMainForecastUI(forecastData) {
   search.focus();
   setHeader(forecastData);
   setSliderTrio(forecastData);
@@ -149,7 +132,7 @@ async function setHomeUI(forecastData) {
   setBackground(forecastData);
   await getRainMap(forecastData);
   await import("./search-field.js");
-  addCity(forecastData);
+  addNewCity(forecastData);
 }
 
-export { getWeather, setHomeUI, getFirstSavedCity };
+export { getWeather, setMainForecastUI, getFirstSavedCity };

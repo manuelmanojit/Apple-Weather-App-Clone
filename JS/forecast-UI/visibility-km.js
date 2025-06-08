@@ -1,6 +1,5 @@
-function getVisibilityCaption(forecastData) {
-  const v = forecastData.visibility;
-
+function getVisibilityCaption(v) {
+  // v === visibility
   if (v >= 20) return "Perfectly clear view";
   if (v >= 10) return "Very clear view at the moment.";
   if (v >= 5) return "Good visibility  at the moment.";
@@ -11,11 +10,12 @@ function getVisibilityCaption(forecastData) {
 }
 
 function setVisibility(forecastData) {
-  const visibility = document.querySelector("#visibility-number");
-  visibility.textContent = `${forecastData.visibility}km`;
+  const visibility = Math.round(forecastData.visibility);
+  const visibilityElement = document.querySelector("#visibility-number");
+  visibilityElement.textContent = `${visibility}km`;
 
   const caption = document.querySelector("#visibility-caption");
-  caption.textContent = getVisibilityCaption(forecastData);
+  caption.textContent = getVisibilityCaption(visibility);
 }
 
 export { setVisibility };

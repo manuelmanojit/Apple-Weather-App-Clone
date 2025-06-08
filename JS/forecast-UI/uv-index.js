@@ -1,5 +1,5 @@
-import { getCurrentHour } from "./utility-functions.js";
-import { isNight } from "./day-or-night.js";
+import { getCurrentHour } from "../utility-functions.js";
+import { isNight } from "../day-or-night.js";
 
 function getSunProtectionRequirement(forecastData) {
   const hourlyForecast = forecastData.hourlyForecast;
@@ -7,10 +7,7 @@ function getSunProtectionRequirement(forecastData) {
   const night = isNight(forecastData);
 
   //loop through each of them and find uvindex
-  const uvList = [];
-  for (let hour of hourlyForecast) {
-    uvList.push(Math.round(hour.uv));
-  }
+  const uvList = hourlyForecast.map((hour) => Math.round(hour.uv));
   const first = uvList.findIndex((uv) => uv >= 3);
   const last = uvList.findLastIndex((uv) => uv >= 3);
 
@@ -27,9 +24,7 @@ function getSunProtectionRequirement(forecastData) {
   }
 }
 
-function getUvIndexLevel(forecastData) {
-  const uv = forecastData.uvIndex;
-
+function getUvIndexLevel(uv) {
   if (uv >= 0 && uv <= 2) return "Low";
   if (uv >= 3 && uv <= 5) return "Moderate";
   if (uv >= 6 && uv <= 7) return "High";
@@ -40,8 +35,7 @@ function getUvIndexLevel(forecastData) {
   return "Unknown";
 }
 
-function makeBallMove(forecastData) {
-  const uv = forecastData.uvIndex;
+function makeBallMove(uv) {
   const ball = document.querySelector(".uvindex-anim-ball");
 
   if (uv === 0) return (ball.style.left = "0%");
@@ -56,7 +50,7 @@ function makeBallMove(forecastData) {
 
 function setUvIndex(forecastData) {
   const uvIndexNumber = forecastData.uvIndex;
-  const uvText = getUvIndexLevel(forecastData);
+  const uvText = getUvIndexLevel(uvIndexNumber);
 
   //Update numeric value
   const numberElement = document.querySelector("#uvindex-value-number");
@@ -67,7 +61,7 @@ function setUvIndex(forecastData) {
   textElement.textContent = uvText;
 
   //Move animation ball
-  makeBallMove(forecastData);
+  makeBallMove(uvIndexNumber);
   //Tell the user when to use sun protection
   getSunProtectionRequirement(forecastData);
 }

@@ -1,4 +1,4 @@
-import { getWeather, setHomeUI } from "./main.js";
+import { getWeather, setMainForecastUI } from "./main.js";
 import { API, BASE_URL } from "./weatherAPI-config.js";
 
 const container = document.querySelector(".search-container");
@@ -40,7 +40,6 @@ async function selectCity(city) {
     (cityData) =>
       cityData.city === forecast.city && cityData.region === forecast.region
   );
-  console.log(cityExists);
   if (cityExists) {
     addButton.style.display = "none";
   } else {
@@ -50,7 +49,7 @@ async function selectCity(city) {
     addButton.style.opacity = "1";
   }
 
-  setHomeUI(forecast);
+  setMainForecastUI(forecast);
 }
 
 function createSuggestions(citiesArray) {

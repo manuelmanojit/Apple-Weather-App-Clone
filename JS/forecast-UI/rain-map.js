@@ -21,8 +21,8 @@ async function getTileURL() {
     "https://api.rainviewer.com/public/weather-maps.json"
   );
   const data = await resp.json();
-
   const path = data.radar.nowcast[0].path;
+
   return `https://tilecache.rainviewer.com${path}/512/{z}/{x}/{y}/2/1_0.png`;
 }
 
