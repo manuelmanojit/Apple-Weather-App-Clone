@@ -1,5 +1,6 @@
 import { getWeather, setMainForecastUI } from "./main.js";
 import { API, BASE_URL } from "./weatherAPI-config.js";
+import { addNewCity } from "./add-city.js";
 
 const container = document.querySelector(".search-container");
 const search = document.querySelector(".search");
@@ -48,7 +49,7 @@ async function selectCity(city) {
     addButton.style.display = "flex";
     addButton.style.opacity = "1";
   }
-
+  addNewCity(forecast);
   setMainForecastUI(forecast);
 }
 

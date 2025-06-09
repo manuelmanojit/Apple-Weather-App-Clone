@@ -1,3 +1,5 @@
+//main.js
+
 import { API, BASE_URL } from "./weatherAPI-config.js";
 import { setBackground } from "./set-background.js";
 import { setHeader } from "./forecast-UI/header.js";
@@ -16,12 +18,14 @@ import {
   showSavedCities,
   getSavedCities,
   loadSidebar,
+  setUpSavedCitiesEvents,
 } from "./add-city.js";
 
 const search = document.querySelector(".search");
 
 // DOMContentLoaded loads faster than "load" event
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", async () => {
+  await import("./search-field.js");
   loadHomeUI();
   search.focus();
   document.documentElement.style.setProperty("--backgroundOpacity", "1");
@@ -56,6 +60,8 @@ async function loadHomeUI() {
     addButton.style.display = "none";
   }
   showSavedCities();
+  setUpSavedCitiesEvents();
+  addNewCity(forecastData);
   setMainForecastUI(forecastData);
 }
 
@@ -131,8 +137,10 @@ async function setMainForecastUI(forecastData) {
   setFutureForecast(forecastData);
   setBackground(forecastData);
   await getRainMap(forecastData);
-  await import("./search-field.js");
-  addNewCity(forecastData);
+  localStorage.setItem(
+    "lastRenderedCity",
+    `${forecastData.latitude},${forecastData.longitude}`
+  );
 }
 
 export { getWeather, setMainForecastUI, getFirstSavedCity };

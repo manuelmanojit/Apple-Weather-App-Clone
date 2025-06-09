@@ -1,15 +1,27 @@
 let map = L.map("rain-map");
+let baseLayer = null;
+let rainLayer = null;
 
 async function getRainMap(forecastData) {
   map.setView([forecastData.latitude, forecastData.longitude], 10);
   // A base map to provide context. OpenStreetMap is a common choice
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  }).addTo(map);
 
+  // Remove previous layers if they exist
+  if (baseLayer) map.removeLayer(baseLayer);
+  if (rainLayer) map.removeLayer(rainLayer);
+
+  // Add a new base layer
+  baseLayer = L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }
+  ).addTo(map);
+
+  // Add a new rain layer
   const rainTile = await getTileURL();
-  L.tileLayer(rainTile, {
+  rainLayer = L.tileLayer(rainTile, {
     attribution: "RainViewer",
     opacity: 0.3, // Adjust opacity as needed
     zIndex: 3, // Ensure it's above the base map
